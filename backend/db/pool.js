@@ -6,8 +6,12 @@ dotenv.config({ path: path.resolve(__dirname, '../../config/.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config();
 
-const dbUrl = process.env.DATABASE_URL || '';
+const dbUrl = process.env.DATABASE_URL || 'postgres://placeholder:placeholder@localhost:5432/placeholder';
 const isCloudDB = dbUrl.includes('supabase.com') || dbUrl.includes('render.com') || dbUrl.includes('neon.tech');
+
+if (!process.env.DATABASE_URL) {
+  console.warn('⚠️ DATABASE_URL belum diset di environment variables. Menggunakan placeholder (koneksi akan gagal jika query dijalankan).');
+}
 
 const pool = new Pool({
   connectionString: dbUrl,

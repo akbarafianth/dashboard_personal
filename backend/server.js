@@ -16,7 +16,10 @@ const port = Number(process.env.PORT || 3000);
 // Pool Error Handler
 pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);
-  process.exit(-1);
+  // Hindari process.exit(-1) pada lingkungan serverless
+  if (!process.env.VERCEL) {
+    process.exit(-1);
+  }
 });
 
 // Rate Limiter Setup

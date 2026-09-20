@@ -26,6 +26,10 @@
     {
       "source": "/",
       "destination": "/pages/landing_page.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
     }
   ]
 }

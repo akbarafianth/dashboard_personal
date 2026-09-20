@@ -1,8 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const htmlPdf = require('html-pdf-node');
 const pool = require('../db/pool');
 const { buildInsert, buildUpdate } = require('./_helpers');
+
+// Modul html-pdf-node sering bermasalah di Serverless (karena membutuhkan Puppeteer/Chromium)
+// Kita panggil secara opsional agar tidak merusak inisialisasi server.
+let htmlPdf = null;
+try {
+  htmlPdf = require('html-pdf-node');
+} catch (err) {
+  console.warn('⚠️ html-pdf-node tidak bisa diload. Fitur export PDF tidak akan bekerja. Error:', err.message);
+}
 
 const config = {
   table: 'notes',
@@ -162,6 +170,7 @@ router.post('/:id/export/:format', async (req, res, next) => {
       const options = { format: 'A4', margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' } };
       
       try {
+        if (!htmlPdf) throw new Error("html-pdf-node modul tidak tersedia di lingkungan server ini.");
         const pdfBuffer = await htmlPdf.generatePdf(file, options);
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="Catatan-${noteId}.pdf"`);
