@@ -30,12 +30,28 @@ if (!window.syncChannel) {
   window.syncChannel = new BroadcastChannel('academiq_sync');
   window.syncChannel.onmessage = (event) => {
     if (event.data === 'REFRESH') {
-      if (typeof loadDashboardData === 'function') loadDashboardData().catch(()=>{});
-      if (typeof loadEvents === 'function') loadEvents().catch(()=>{});
-      if (typeof loadSubjects === 'function') loadSubjects().catch(()=>{});
-      if (typeof loadNotes === 'function') loadNotes().catch(()=>{});
-      if (typeof loadTasks === 'function') loadTasks().catch(()=>{});
-      if (typeof loadAllTasks === 'function') loadAllTasks().catch(()=>{});
+      triggerGlobalRefresh();
     }
   };
 }
+
+// Helper to trigger fetch on all loaded modules
+window.triggerGlobalRefresh = function() {
+  if (typeof loadDashboardData === 'function') loadDashboardData().catch(()=>{});
+  if (typeof loadEvents === 'function') loadEvents().catch(()=>{});
+  if (typeof loadSubjects === 'function') loadSubjects().catch(()=>{});
+  if (typeof loadNotes === 'function') loadNotes().catch(()=>{});
+  if (typeof loadTasks === 'function') loadTasks().catch(()=>{});
+  if (typeof loadAllTasks === 'function') loadAllTasks().catch(()=>{});
+};
+
+// Smart Focus Trigger (Auto Fetch saat kembali ke tab/buka aplikasi di HP)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    window.triggerGlobalRefresh();
+  }
+});
+
+window.addEventListener('focus', () => {
+  window.triggerGlobalRefresh();
+});
