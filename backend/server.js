@@ -29,7 +29,7 @@ const limiter = rateLimit({
 // Middleware
 app.use(morgan('tiny'));
 app.use(limiter);
-app.use(cors({ origin: ['http://localhost:3000', 'http://127.0.0.1:3000'] }));
+app.use(cors()); // Allow all origins untuk mempermudah Vercel Serverless
 app.use(express.json());
 
 // Health Check
@@ -50,6 +50,7 @@ app.use('/api/notes', require('./routes/notes'));
 app.use('/api/search', require('./routes/search'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api', require('./routes/settings'));
 
 // Error Handler
@@ -58,21 +59,25 @@ app.use((error, _req, res, _next) => {
   res.status(error.status || 500).json({ error: error.message || 'Terjadi kesalahan pada server' });
 });
 
-// Server Listen
-const server = app.listen(port, () => {
-  console.log(`API berjalan di http://localhost:${port}`);
-});
-
-// Graceful Shutdown
-const shutdown = () => {
-  console.log('Shutting down server...');
-  server.close(() => {
-    pool.end(() => {
-      console.log('Database pool closed. Server terminated.');
-      process.exit(0);
-    });
+// Server Listen (Hanya jalan di lokal, Vercel menggunakan export module)
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  const server = app.listen(port, () => {
+    console.log(\`API berjalan di http://localhost:\${port}\`);
   });
-};
 
-process.on('SIGTERM', shutdown);
-process.on('SIGINT', shutdown);
+  // Graceful Shutdown
+  const shutdown = () => {
+    console.log('Shutting down server...');
+    server.close(() => {
+      pool.end(() => {
+        console.log('Database pool closed. Server terminated.');
+        process.exit(0);
+      });
+    });
+  };
+
+  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', shutdown);
+}
+
+module.exports = app;

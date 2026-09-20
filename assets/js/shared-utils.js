@@ -1,5 +1,6 @@
 
-window.API_BASE = window.API_BASE || 'http://localhost:3000/api';
+// Menggunakan relative path agar dinamis (bisa untuk localhost dan domain Vercel)
+window.API_BASE = window.API_BASE || '/api';
 
 window.escapeHtml = function(str) {
   if (!str) return '';
@@ -43,6 +44,7 @@ window.triggerGlobalRefresh = function() {
   if (typeof loadNotes === 'function') loadNotes().catch(()=>{});
   if (typeof loadTasks === 'function') loadTasks().catch(()=>{});
   if (typeof loadAllTasks === 'function') loadAllTasks().catch(()=>{});
+  if (typeof loadNotifications === 'function') loadNotifications().catch(()=>{});
 };
 
 // Smart Focus Trigger (Auto Fetch saat kembali ke tab/buka aplikasi di HP)
