@@ -1,0 +1,364 @@
+<!DOCTYPE html><html class="dark" lang="id"><head><title>AcademIQ - Dashboard Akademik</title><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+  <script src="../assets/js/tailwind-config.js"></script><script src="../assets/js/dashboard-data.js" defer></script>  <link rel="stylesheet" href="../assets/css/base.css">
+<script src="../assets/js/shared-utils.js"></script>
+<script src="../assets/js/toast.js"></script>
+<script src="../assets/js/sidebar.js" defer></script>
+</head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary selection:text-on-primary"><aside class="-translate-x-full lg:translate-x-0 fixed left-0 top-0 h-full w-64 transition-transform duration-300 z-50 bg-surface-container-low/95 backdrop-blur-xl z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="flex flex-col flex-1 min-h-0"><div class="px-space-md py-space-xs"><div class="px-space-sm py-space-2xs"><span class="font-label-sm text-label-sm text-outline tracking-wider uppercase">Akademik &amp; Studi</span></div></div><nav class="flex-1 px-space-xs space-y-space-3xs overflow-y-auto" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_0_24px_-4px_rgba(128,131,255,0.35)]"><a aria-current="page" class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-xl transition-all duration-200 bg-primary-container text-on-primary-container font-semibold shadow-[0_0_24px_-4px_rgba(128,131,255,0.35)]" data-path="dashboard" href="dashboard_akademik_utama.html"><span class="material-symbols-outlined text-primary text-[20px]">space_dashboard</span><span class="">Dashboard</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-xl font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="kalender-agenda" href="kalender_jadwal_tugas_acara.html"><span class="material-symbols-outlined text-tertiary text-[20px]">calendar_month</span><span class="">Kalender &amp; Agenda</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-xl font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="mata-kuliah" href="mata_kuliah_key_takeaways_pertemuan.html"><span class="material-symbols-outlined text-secondary text-[20px]">school</span><span class="">Mata Kuliah (Courses)</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-xl font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="catatan-pertemuan" href="catatan_pertemuan.html"><span class="material-symbols-outlined text-tertiary-fixed-dim text-[20px]">auto_stories</span><span class="">Catatan Pertemuan</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-xl font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="tugas-acara" href="tugas_acara.html"><span class="material-symbols-outlined text-primary-fixed-dim text-[20px]">assignment_late</span><span class="">Tugas &amp; Acara</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-xl font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="statistik-belajar" href="to_do_list_akademik.html"><span class="material-symbols-outlined text-tertiary text-[20px]">query_stats</span><span class="">Statistik Belajar</span></a></nav></div><div class="p-space-xs bg-surface-container-lowest/60"><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-xl font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="pengaturan" href="to_do_list_akademik.html"><span class="material-symbols-outlined text-[20px]">settings</span><span class="">Pengaturan</span></a></div></aside><div class="pl-64 flex flex-col min-h-screen"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-low/80 backdrop-blur-xl z-40 px-space-lg flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.3)]"><div class="flex items-center gap-space-md flex-1 max-w-xl"><div class="relative w-full"><span class="material-symbols-outlined absolute left-space-sm top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span><input class="w-full h-10 pl-10 pr-space-md bg-surface-container-lowest rounded-xl font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-container transition-all" placeholder="Cari catatan, materi, atau kode matkul (⌘+K)..." type="text"></div><div class="relative flex-shrink-0"><button class="flex items-center gap-space-xs px-space-sm h-10 bg-surface-container rounded-xl font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="">Semester Ganjil 2026/2027</span><span class="material-symbols-outlined text-[16px]">expand_more</span></button></div></div><div class="flex items-center gap-space-md"><button class="relative w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-low"></span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="text-right hidden sm:flex flex-col"><span class="font-label-md text-label-md text-on-surface leading-tight">Akbar Ariffianto</span><span class="font-code-sm text-code-sm text-outline" data-header-date></span></div></div></div></header><main class="w-full pt-16 bg-background flex-1"><div class="flex flex-col w-full">
+<div class="p-space-lg lg:p-margin-desktop space-y-space-xl max-w-[1720px] mx-auto w-full">
+<!-- WELCOME & EXECUTIVE COMMAND HEADER -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-space-lg lg:p-space-xl shadow-xl">
+<!-- Ambient Glow Decorator -->
+<div class="absolute -right-16 -top-24 w-96 h-96 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+<div class="absolute -left-20 -bottom-20 w-72 h-72 rounded-full bg-tertiary/10 blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-space-lg">
+<div class="space-y-space-xs max-w-3xl">
+<div class="flex flex-wrap items-center gap-space-xs">
+<span class="px-space-xs py-space-3xs rounded-full bg-primary-container/20 text-primary font-label-sm text-label-sm uppercase tracking-wider" data-setting="semester">Semester Ganjil 2026/2027</span>
+<span class="text-outline text-[12px]">•</span>
+<span class="font-code-sm text-code-sm text-tertiary" data-header-date>Rabu, 14 Mei 2025</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg lg:font-display-lg lg:text-display-lg text-on-surface tracking-tight">
+            Selamat Datang Kembali, <span data-setting="display_name">Akbar Ariffianto</span> 👋
+          </h1>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-space-xs">
+            Fokus hari ini: <span class="text-on-surface font-semibold" data-setting="focus_text">Belum ada fokus hari ini</span>
+</p>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm">
+<button class="flex items-center gap-space-xs px-space-md py-space-xs rounded-xl bg-primary-container text-on-primary-container font-label-md text-label-md shadow-lg shadow-primary-container/25 hover:brightness-110 active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">add_notes</span>
+<span class="">+ Catat Pertemuan Baru</span>
+</button>
+<a class="flex items-center gap-space-xs px-space-md py-space-xs rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-bright font-label-md text-label-md transition-colors" href="to_do_list_akademik.html">
+<span class="material-symbols-outlined text-secondary text-[18px]">checklist</span>
+<span class="">Buka To-Do List</span>
+<span class="ml-1 px-1.5 py-0.5 rounded-full bg-secondary/20 text-secondary font-code-sm text-code-sm">8</span>
+</a>
+<button class="flex items-center gap-space-xs px-space-md py-space-xs rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span class="">Unduh Transkrip</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-space-xs rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-bright font-label-md text-label-md transition-colors" data-open-dashboard-settings type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span class="">Kustomisasi Dashboard</span>
+</button>
+</div>
+</div>
+</div>
+<!-- METRICS STRIP (4 KPIS) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
+<!-- Metric 1: Beban Studi -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-space-md shadow-md hover:shadow-xl transition-all">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Beban Studi Aktif</span>
+<div class="w-8 h-8 rounded-lg bg-secondary/15 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">school</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-display-lg-mobile text-display-lg-mobile text-on-surface font-headline-lg" data-setting="active_subject_count">0</span>
+<span class="font-headline-sm text-headline-sm text-on-surface-variant">Mata Kuliah</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface-variant"><span data-setting="study_phase">Semester 3</span> • <span data-setting="active_credits">0</span> SKS Aktif</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-primary/15 text-primary">Beban Penuh</span>
+</div>
+<div class="mt-space-sm w-full h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary-container to-secondary rounded-full" style="width: 87.5%"></div>
+</div>
+</div>
+<!-- Metric 2: Tugas Deadline -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-space-md shadow-md hover:shadow-xl transition-all">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Tugas Minggu Ini</span>
+<div class="w-8 h-8 rounded-lg bg-error/15 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-[20px]">assignment_late</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-display-lg-mobile text-display-lg-mobile text-on-surface font-headline-lg" data-active-task-count>0</span>
+<span class="font-headline-sm text-headline-sm text-on-surface-variant">Deadline Aktif</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-error font-semibold flex items-center gap-1">
+            1 Sangat Mendesak
+          </span>
+<span class="font-code-sm text-code-sm text-outline">&lt; 24 Jam</span>
+</div>
+<div class="mt-space-sm w-full h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 65%"></div>
+</div>
+</div>
+<!-- Metric 3: IPK Kumulatif -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-space-md shadow-md hover:shadow-xl transition-all">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Indeks Prestasi (IPK)</span>
+<div class="w-8 h-8 rounded-lg bg-tertiary/15 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">award_star</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-display-lg-mobile text-display-lg-mobile text-on-surface font-headline-lg text-tertiary" data-setting="gpa">3.73</span>
+<span class="font-code-sm text-code-sm text-outline">/ 4.00</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-tertiary-fixed font-semibold">Cumlaude Track</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-tertiary/15 text-tertiary">+0.07 vs Sem. Lalu</span>
+</div>
+<div class="mt-space-sm w-full h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 96%"></div>
+</div>
+</div>
+<!-- Metric 4: Dokumentasi Kuliah -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-space-md shadow-md hover:shadow-xl transition-all">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Dokumentasi Catatan</span>
+<div class="w-8 h-8 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-display-lg-mobile text-display-lg-mobile text-on-surface font-headline-lg">28</span>
+<span class="font-headline-sm text-headline-sm text-on-surface-variant">Pertemuan</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface-variant">100% Terindeks</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-primary-fixed">54 Key Takeaways</span>
+</div>
+<div class="mt-space-sm w-full h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+<!-- MAIN TWO-COLUMN DASHBOARD GRID -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- LEFT PRIMARY COLUMN (Width ~65% -> 8 of 12 cols) -->
+<div class="lg:col-span-8 space-y-space-xl min-w-0">
+<!-- SECTION: JADWAL KULIAH HARI INI -->
+<div class="space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Jadwal Kuliah &amp; Agenda Hari Ini</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-code-sm text-code-sm" data-header-date>Rabu, 14 Mei 2025</span>
+</div>
+<a class="font-label-sm text-label-sm text-primary hover:text-primary-fixed flex items-center gap-1 transition-colors" href="kalender_jadwal_tugas_acara.html">
+              Lihat Kalender Lengkap
+              <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<div class="space-y-space-sm" id="today-events-list"></div>
+</div>
+<!-- SECTION: AKSES CEPAT MATA KULIAH AKTIF (CARD GRID) -->
+<div class="space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Mata Kuliah Aktif</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-code-sm text-code-sm">Semester Ganjil 2026/2027</span>
+</div>
+<a class="font-label-sm text-label-sm text-secondary hover:text-secondary-fixed flex items-center gap-1 transition-colors" href="mata_kuliah_key_takeaways_pertemuan.html">
+              Semua Silabus &amp; Bahan
+              <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md" id="active-subjects-list"></div>
+</div>
+</div>
+<!-- SECTION: RINGKASAN KEY TAKEAWAYS PERTEMUAN TERBARU -->
+<div class="space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Key Takeaways Pertemuan Terbaru</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-code-sm text-code-sm">AI Synthesized</span>
+</div>
+<a class="font-label-sm text-label-sm text-tertiary hover:text-tertiary-fixed flex items-center gap-1 transition-colors" href="catatan_pertemuan.html">
+              Arsip Catatan
+              <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<div class="space-y-space-sm" id="key-takeaways-list">
+<p class="text-body-sm text-outline p-space-md bg-surface-container rounded-xl text-center">Belum ada key takeaways terbaru.</p>
+</div>
+</div>
+</div>
+<!-- RIGHT WIDGET COLUMN (Width ~35% -> 4 of 12 cols) -->
+<div class="lg:col-span-4 space-y-space-lg min-w-0">
+<!-- WIDGET 1: MINI KALENDER INTERAKTIF (MEI 2025) -->
+<div class="rounded-xl bg-surface-container-low p-space-md shadow-md space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">calendar_month</span>
+<span class="font-headline-sm text-headline-sm text-on-surface" id="dashboard-calendar-title">Kalender</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-bright transition-colors" title="Bulan Sebelumnya" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-bright transition-colors" title="Bulan Selanjutnya" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Calendar Grid Table -->
+<div class="space-y-space-xs">
+<div class="grid grid-cols-7 text-center font-code-sm text-code-sm text-outline font-semibold pb-space-2xs">
+<span class="">MIN</span><span class="">SEN</span><span class="">SEL</span><span class="">RAB</span><span class="">KAM</span><span class="">JUM</span><span class="">SAB</span>
+</div>
+<!-- Days -->
+<div class="grid grid-cols-7 gap-1 text-center font-code-sm text-code-sm" id="dashboard-calendar-grid">
+<!-- Prev Month Dates -->
+<span class="p-2 text-outline-variant">27</span>
+<span class="p-2 text-outline-variant">28</span>
+<span class="p-2 text-outline-variant">29</span>
+<span class="p-2 text-outline-variant">30</span>
+<!-- Current Month Dates -->
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">1</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">2</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">3</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">4</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">5</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">6</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">7</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">8</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">9</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">10</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">11</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">12</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">13</span>
+<!-- TODAY (14 MEI) -->
+<div class="relative p-2 rounded-lg bg-primary-container text-on-primary-container font-bold shadow-[0_0_16px_rgba(128,131,255,0.4)]">
+<span class="">14</span>
+<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-on-primary"></span>
+</div>
+<!-- Upcoming deadlines -->
+<div class="relative p-2 rounded-lg bg-surface-container text-on-surface hover:bg-surface-bright">
+<span class="">15</span>
+<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-error"></span>
+</div>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">16</span>
+<div class="relative p-2 rounded-lg bg-surface-container text-on-surface hover:bg-surface-bright">
+<span class="">17</span>
+<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-tertiary"></span>
+</div>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">18</span>
+<div class="relative p-2 rounded-lg bg-surface-container text-on-surface hover:bg-surface-bright">
+<span class="">19</span>
+<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span>
+</div>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">20</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">21</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">22</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">23</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">24</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">25</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">26</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">27</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">28</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">29</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">30</span>
+<span class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">31</span>
+</div>
+</div>
+<!-- Legend dots -->
+<div class="pt-space-xs flex flex-wrap items-center justify-between gap-space-2xs text-body-sm font-body-sm text-outline">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error"></span> Tugas Kuliah
+            </span>
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Ujian/Kuis
+            </span>
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> Seminar/Diskusi
+            </span>
+</div>
+</div>
+<!-- WIDGET 2: TENGGAT WAKTU TERDEKAT (UPCOMING DEADLINES) -->
+<div class="rounded-xl bg-surface-container-low p-space-md shadow-md space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-error text-[20px]">notification_important</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Tenggat Waktu Terdekat</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-error/15 text-error font-code-sm text-code-sm font-semibold" id="upcoming-deadlines-count">0 Tugas</span>
+</div>
+<div class="space-y-space-sm" id="upcoming-deadlines-list">
+<p class="text-body-sm text-body-sm text-outline">Belum ada tugas aktif dengan tenggat.</p>
+</div>
+</div>
+<!-- WIDGET 3: QUICK ADD TUGAS / ACARA CEPAT -->
+<div class="rounded-xl bg-surface-container-low p-space-md shadow-md space-y-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-tertiary text-[20px]">add_circle</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Tambah Tugas / Acara Cepat</h3>
+</div>
+<form class="space-y-space-sm" id="quick-task-form">
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-outline uppercase tracking-wider" for="task-title">Judul Tugas / Agenda</label>
+<input class="w-full h-10 px-space-sm bg-surface-container-lowest rounded-xl font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container transition-all" id="task-title" placeholder="Misal: Review Bab 4 Graph Algorithm..." required="" type="text">
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-outline uppercase tracking-wider" for="task-date">Tenggat Waktu</label>
+<input class="w-full h-10 px-space-xs bg-surface-container-lowest rounded-xl font-code-sm text-code-sm text-on-surface focus:outline-none focus:bg-surface-container transition-all" id="task-date" type="date" required>
+</div>
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-outline uppercase tracking-wider" for="task-category">Kategori</label>
+<select class="w-full h-10 px-space-xs bg-surface-container-lowest rounded-xl font-body-sm text-body-sm text-on-surface focus:outline-none focus:bg-surface-container transition-all" id="task-category">
+<option value="tugas">Tugas Kuliah</option>
+<option value="ujian">Ujian / Kuis</option>
+<option value="diskusi">Diskusi Proyek</option>
+<option value="pribadi">Studi Mandiri</option>
+</select>
+</div>
+</div>
+<button class="w-full h-10 rounded-xl bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1 shadow-md hover:brightness-110 active:scale-95 transition-all" type="submit">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+<span class="">Simpan ke Agenda</span>
+</button>
+</form>
+</div>
+<!-- WIDGET 4: BANNER AKADEMIK / REGISTRASI RENCANA STUDI -->
+<div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-high p-space-md shadow-md">
+<div class="flex items-start gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-tertiary-container text-on-tertiary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">verified</span>
+</div>
+<div class="space-y-space-2xs min-w-0">
+<h4 class="font-title-md text-title-md text-on-surface">Portal Kurikulum &amp; Silabus</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Seluruh 6 mata kuliah semester aktif telah disinkronkan dengan repositori akademik prodi Teknik Informatika.
+              </p>
+<div class="pt-space-xs">
+<a class="inline-flex items-center gap-1 font-label-md text-label-md text-tertiary hover:text-tertiary-fixed transition-colors" href="mata_kuliah_key_takeaways_pertemuan.html">
+<span class="">Akses Dokumen RPS</span>
+<span class="material-symbols-outlined text-[16px]">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></main></div>
+<div class="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-space-md hidden" id="dashboard-settings-modal">
+<div class="w-full max-w-lg bg-surface-container-low p-space-xl rounded-xl shadow-2xl space-y-space-md">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-on-surface">Kustomisasi Dashboard</h3>
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-outline hover:text-on-surface" data-close-dashboard-settings type="button"><span class="material-symbols-outlined text-[18px]">close</span></button>
+</div>
+<form class="space-y-space-sm" id="dashboard-settings-form">
+<div><label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="settings-display-name">Nama</label><input class="w-full h-10 px-space-sm bg-surface-container-lowest rounded-xl text-on-surface" id="settings-display-name" name="display_name" required></div>
+<div><label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="settings-semester">Semester</label><input class="w-full h-10 px-space-sm bg-surface-container-lowest rounded-xl text-on-surface" id="settings-semester" name="semester" required></div>
+<div class="grid grid-cols-2 gap-space-sm"><div><label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="settings-gpa">IPK</label><input class="w-full h-10 px-space-sm bg-surface-container-lowest rounded-xl text-on-surface" id="settings-gpa" name="gpa" min="0" max="4" step="0.01" type="number" required></div><div><label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="settings-study-phase">Fase Studi</label><input class="w-full h-10 px-space-sm bg-surface-container-lowest rounded-xl text-on-surface" id="settings-study-phase" name="study_phase" required></div></div>
+<div><label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="settings-active-credits">SKS Aktif</label><input class="w-full h-10 px-space-sm bg-surface-container-lowest rounded-xl text-on-surface" id="settings-active-credits" name="active_credits" min="0" type="number" required></div>
+<div><label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="settings-focus-text">Fokus Hari Ini</label><textarea class="w-full p-space-sm bg-surface-container-lowest rounded-xl text-on-surface resize-none" id="settings-focus-text" name="focus_text" rows="3"></textarea></div>
+<div class="flex justify-end gap-space-sm"><button class="px-space-md h-10 rounded-xl bg-surface-container text-on-surface-variant" data-close-dashboard-settings type="button">Batal</button><button class="px-space-lg h-10 rounded-xl bg-primary text-on-primary" type="submit">Simpan</button></div>
+</form>
+</div>
+</div>
+</body></html>
+

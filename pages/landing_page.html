@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AcademIQ — Welcome & Entrance Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../assets/js/landing.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  
+  <link rel="stylesheet" href="../assets/css/landing.css">
+<script src="../assets/js/shared-utils.js"></script>
+<script src="../assets/js/toast.js"></script></head>
+
+<body
+  class="bg-surface text-slate-100 font-sans min-h-screen relative overflow-x-hidden flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+  <!-- Ambient Glowing Orbs Background -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div
+      class="absolute -top-[20%] left-1/2 -translate-x-1/2 w-[850px] h-[500px] bg-indigo-600/20 rounded-full blur-[140px] animate-glow-orb-1">
+    </div>
+    <div
+      class="absolute top-[40%] -left-[150px] w-[500px] h-[500px] bg-violet-600/15 rounded-full blur-[130px] animate-glow-orb-2">
+    </div>
+    <div
+      class="absolute bottom-0 right-[5%] w-[600px] h-[450px] bg-indigo-500/12 rounded-full blur-[150px] animate-glow-orb-1">
+    </div>
+    <div class="absolute inset-0 bg-grid-pattern opacity-70"></div>
+    <!-- Radial Vignette -->
+    <div class="absolute inset-0 bg-radial-gradient from-transparent via-surface/40 to-surface pointer-events-none">
+    </div>
+  </div>
+
+  <!-- Top Minimalist Brand Header -->
+  <header class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 py-6 flex items-center justify-between stagger-1">
+    <div class="flex items-center gap-3.5">
+      <div
+        class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 p-0.5 shadow-lg shadow-indigo-500/25 flex items-center justify-center">
+        <div class="w-full h-full bg-[#0a0d14] rounded-[10px] flex items-center justify-center">
+          <i class="fa-solid fa-graduation-cap text-indigo-400 text-lg"></i>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-extrabold tracking-tight text-white text-lg">Academ<span
+              class="text-indigo-400">IQ</span></span>
+          <span
+            class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/25 text-indigo-300">v2.4
+            Core</span>
+        </div>
+        <p class="text-[11px] text-slate-400 font-medium">Personal Academic Command Center</p>
+      </div>
+    </div>
+
+    <!-- Status & Session Pill -->
+    <div class="flex items-center gap-3">
+      <div
+        class="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card/80 border border-surface-border text-xs text-slate-300 backdrop-blur-md">
+        <span>Semester Ganjil 2026/2027</span>
+        <span class="text-slate-600">•</span>
+        <span class="text-indigo-300 font-medium">Akbar Ariffianto</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Main Welcoming & Philosophy Section -->
+  <main
+    class="relative z-10 w-full max-w-5xl mx-auto px-6 py-6 sm:py-10 flex-1 flex flex-col items-center justify-center text-center">
+
+    <!-- Welcoming Badge -->
+    <div
+      class="stagger-1 mb-5 inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-indigo-950/50 border border-indigo-500/30 backdrop-blur-md shadow-inner text-xs sm:text-sm text-indigo-200">
+      <span class="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs">
+        <i class="fa-solid fa-sparkles"></i>
+      </span>
+      <span>Selamat Datang di Command Center Akademik Anda</span>
+      <span class="text-indigo-400/50">•</span>
+      <span class="text-slate-400 text-xs" data-header-date>Rabu, 14 Mei 2025</span>
+    </div>
+
+    <!-- Grand Motto: VENI, VIDI, VICI -->
+    <div class="stagger-2 my-2 sm:my-3">
+      <h1
+        class="font-cinzel text-5xl sm:text-7xl md:text-8xl font-black tracking-wider sm:tracking-widest uppercase gold-gradient-text drop-shadow-2xl">
+        VENI, VIDI, VICI
+      </h1>
+      <div
+        class="flex items-center justify-center gap-3 sm:gap-6 mt-3 text-xs sm:text-sm font-semibold tracking-[0.25em] text-indigo-300 uppercase opacity-90">
+        <span>Aku Datang</span>
+        <span class="w-1 h-1 rounded-full bg-indigo-400"></span>
+        <span>Aku Melihat</span>
+        <span class="w-1 h-1 rounded-full bg-indigo-400"></span>
+        <span>Aku Menang</span>
+      </div>
+    </div>
+
+    <!-- Philosophical Supporting Narrative -->
+    <p class="stagger-3 max-w-2xl mt-6 text-sm sm:text-base md:text-lg text-slate-300 font-normal leading-relaxed">
+      Selamat datang Akbar, jangan lupa untuk cek catatan dan jangan males.
+    </p>
+
+    <!-- Main Enter Buttons / CTA -->
+    <div class="stagger-4 mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md">
+      <!-- Primary Button to Workspace -->
+      <a href="dashboard_akademik_utama.html"
+        class="group relative w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold text-sm sm:text-base shadow-xl shadow-indigo-600/30 hover:shadow-indigo-500/50 transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] border border-indigo-400/30 animate-glow-border">
+        <span>Masuk ke Workspace</span>
+        <i class="fa-solid fa-arrow-right text-sm transition-transform duration-300 group-hover:translate-x-1.5"></i>
+      </a>
+
+      <!-- Secondary Quick Target: To-Do List -->
+      <a href="to_do_list_akademik.html"
+        class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-surface-card/90 hover:bg-slate-800/80 text-slate-200 hover:text-white font-medium text-sm sm:text-base border border-surface-border hover:border-slate-700 transition-all duration-200 backdrop-blur-md">
+        <i class="fa-solid fa-list-check text-indigo-400"></i>
+        <span>Buka To-Do List Hari Ini</span>
+      </a>
+    </div>
+
+    <!-- Quick Academic Glance / Snapshot Widgets -->
+    <div class="stagger-5 mt-12 sm:mt-14 w-full grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-4 text-left">
+      <!-- Card 1: IPK & Prestasi -->
+      <div
+        class="p-4 sm:p-4.5 rounded-xl bg-surface-card/70 border border-surface-border backdrop-blur-md hover:border-indigo-500/40 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Performa IPK</span>
+          <div
+            class="w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
+            <i class="fa-solid fa-award text-xs"></i>
+          </div>
+        </div>
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-2xl font-bold text-white font-mono">3.73</span>
+          <span class="text-xs text-slate-400">/ 4.00</span>
+        </div>
+        <div class="mt-2 flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium">
+          <i class="fa-solid fa-arrow-trend-up text-[10px]"></i>
+          <span>Cum Laude • Top 3%</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Beban SKS -->
+      <div
+        class="p-4 sm:p-4.5 rounded-xl bg-surface-card/70 border border-surface-border backdrop-blur-md hover:border-indigo-500/40 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Fase Studi</span>
+          <div
+            class="w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
+            <i class="fa-solid fa-layer-group text-xs"></i>
+          </div>
+        </div>
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-2xl font-bold text-white font-mono">Semester 3</span>
+        </div>
+        <div class="mt-2 text-[11px] text-slate-400">
+          <span class="text-indigo-300 font-semibold">22 SKS</span> Aktif (6 Matkul)
+        </div>
+      </div>
+
+      <!-- Card 3: Prioritas Tugas -->
+      <div
+        class="p-4 sm:p-4.5 rounded-xl bg-surface-card/70 border border-surface-border backdrop-blur-md hover:border-indigo-500/40 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tenggat Terdekat</span>
+          <div
+            class="w-7 h-7 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 group-hover:bg-rose-500/20 transition-colors">
+            <i class="fa-solid fa-fire text-xs"></i>
+          </div>
+        </div>
+        <div class="flex items-baseline gap-1.5">
+          <span id="landing-active-tasks" class="text-2xl font-bold text-white font-mono">4 Tugas</span>
+        </div>
+        <div class="mt-2 flex items-center gap-1.5 text-[11px] text-rose-400 font-medium">
+          <span id="landing-urgent-tasks">1 Deadline Mendesak (< 24 Jam)</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Fokus Belajar -->
+      <div
+        class="p-4 sm:p-4.5 rounded-xl bg-surface-card/70 border border-surface-border backdrop-blur-md hover:border-indigo-500/40 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Ritme Studi</span>
+          <div
+            class="w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
+            <i class="fa-solid fa-bolt text-xs"></i>
+          </div>
+        </div>
+        <div class="flex items-baseline gap-1.5">
+          <span id="landing-study-days" class="text-2xl font-bold text-white font-mono">18 Hari</span>
+        </div>
+        <div class="mt-2 flex items-center gap-1.5 text-[11px] text-indigo-300 font-medium">
+          <i class="fa-solid fa-clock-rotate-left text-[10px]"></i>
+          <span id="landing-study-hours-avg">Rata-rata 5.6 jam / hari</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Portal Gateway Destinations -->
+    <div
+      class="stagger-6 mt-8 sm:mt-10 w-full pt-6 border-t border-surface-border/80 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-slate-400">
+      <span class="text-slate-500 uppercase tracking-wider font-semibold text-[10px]">Navigasi Langsung:</span>
+      <a href="dashboard_akademik_utama.html"
+        class="flex items-center gap-2 hover:text-indigo-400 transition-colors py-1 px-2 rounded-lg hover:bg-surface-card">
+        <i class="fa-solid fa-table-columns text-slate-500"></i>
+        <span>Dashboard Utama</span>
+      </a>
+      <a href="kalender_jadwal_tugas_acara.html"
+        class="flex items-center gap-2 hover:text-indigo-400 transition-colors py-1 px-2 rounded-lg hover:bg-surface-card">
+        <i class="fa-regular fa-calendar text-slate-500"></i>
+        <span>Kalender & Agenda</span>
+      </a>
+      <a href="mata_kuliah_key_takeaways_pertemuan.html"
+        class="flex items-center gap-2 hover:text-indigo-400 transition-colors py-1 px-2 rounded-lg hover:bg-surface-card">
+        <i class="fa-solid fa-book-open text-slate-500"></i>
+        <span>Mata Kuliah & Silabus</span>
+      </a>
+      <a href="catatan_pertemuan.html"
+        class="flex items-center gap-2 hover:text-indigo-400 transition-colors py-1 px-2 rounded-lg hover:bg-surface-card">
+        <i class="fa-regular fa-note-sticky text-slate-500"></i>
+        <span>Catatan Pertemuan</span>
+      </a>
+      <a href="to_do_list_akademik.html"
+        class="flex items-center gap-2 hover:text-indigo-400 transition-colors py-1 px-2 rounded-lg hover:bg-surface-card">
+        <i class="fa-solid fa-list-check text-slate-500"></i>
+        <span>To-Do List</span>
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Bottom Stoic Wisdom & System Info Footer -->
+  <footer
+    class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 py-5 border-t border-surface-border/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 stagger-6">
+    <div class="flex items-center gap-2 text-center sm:text-left italic">
+      <i class="fa-solid fa-quote-left text-[10px] text-indigo-400/60"></i>
+      <span>“Hanya orang-orang terdidik dan yang bersungguh-sungguh melatih akal budinyalah yang benar-benar merdeka
+        secara utuh.”</span>
+      <span class="text-slate-400 font-medium not-italic">— Epictetus</span>
+    </div>
+    <div class="flex items-center gap-4 text-[11px]">
+      <span>Tekan <kbd
+          class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono text-[10px] border border-slate-700">Enter
+          ↵</kbd> untuk mulai</span>
+    </div>
+  </footer>
+
+</body>
+
+</html>
+

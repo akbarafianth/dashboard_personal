@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=pages/landing_page.html">
+    <title>AcademIQ - Redirecting...</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+        .redirect-msg {
+            text-align: center;
+            opacity: 0.7;
+        }
+        .redirect-msg p {
+            font-size: 0.95rem;
+        }
+        .redirect-msg a {
+            color: #7c8aff;
+            text-decoration: none;
+        }
+        .redirect-msg a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="redirect-msg">
+        <p>Mengarahkan ke Landing Page...</p>
+        <p><a href="pages/landing_page.html">Klik di sini jika tidak otomatis redirect</a></p>
+    </div>
+    <script>
+        window.location.replace('pages/landing_page.html');
+    </script>
+</body>
+</html>
