@@ -62,7 +62,7 @@ app.use((error, _req, res, _next) => {
 // Server Listen (Hanya jalan di lokal, Vercel menggunakan export module)
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   const server = app.listen(port, () => {
-    console.log(\`API berjalan di http://localhost:\${port}\`);
+    console.log(`API berjalan di http://localhost:${port}`);
   });
 
   // Graceful Shutdown
