@@ -196,7 +196,7 @@ async function loadNotes() {
   renderNotes(await noteRequest('/notes'));
 }
 
-function initNotes() {
+document.addEventListener('DOMContentLoaded', () => {
   let quill;
   if (document.getElementById('note-content')) {
     quill = new window.Quill('#note-content', {
@@ -269,7 +269,13 @@ function initNotes() {
   renderHeaderDate();
   loadNotes().catch(() => {});
   window.setInterval(() => { if (!document.hidden) loadNotes().catch(() => {}); }, 5000);
-} document.addEventListener('DOMContentLoaded', initNotes); window.addEventListener('pageChanged', initNotes); if (!window.syncChannel) {
+});
+
+
+
+
+
+if (!window.syncChannel) {
   window.syncChannel = new BroadcastChannel('academiq_sync');
   window.syncChannel.onmessage = (event) => {
     if (event.data === 'REFRESH') {
@@ -282,4 +288,3 @@ function initNotes() {
     }
   };
 }
-

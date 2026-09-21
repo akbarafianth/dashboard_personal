@@ -1,5 +1,5 @@
 // sidebar.js
-function initSidebar() {
+document.addEventListener('DOMContentLoaded', () => {
   const sidebar = document.querySelector('aside');
   if (!sidebar) return;
 
@@ -57,4 +57,4 @@ function initSidebar() {
     });
     sidebarHeader.appendChild(closeSidebarBtn);
   }
-} document.addEventListener('DOMContentLoaded', initSidebar); window.addEventListener('pageChanged', initSidebar);
+});

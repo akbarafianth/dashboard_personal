@@ -333,13 +333,18 @@ async function loadAllTasks() {
   }
 }
 
-function initTodo() {
+document.addEventListener('DOMContentLoaded', () => {
   renderHeaderDate();
   initPomodoro();
   initQuickTodoForm();
   loadAllTasks();
   window.setInterval(() => { if (!document.hidden) loadAllTasks(); }, 5000);
-} document.addEventListener('DOMContentLoaded', initTodo); window.addEventListener('pageChanged', initTodo); if (!window.syncChannel) {
+});
+
+
+
+
+if (!window.syncChannel) {
   window.syncChannel = new BroadcastChannel('academiq_sync');
   window.syncChannel.onmessage = (event) => {
     if (event.data === 'REFRESH') {
@@ -352,4 +357,3 @@ function initTodo() {
     }
   };
 }
-
