@@ -6,9 +6,7 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const pool = require('./db/pool');
 
-dotenv.config({ path: path.resolve(__dirname, '../config/.env') });
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
-dotenv.config();
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
