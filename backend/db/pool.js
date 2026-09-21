@@ -11,14 +11,15 @@ if (!process.env.DATABASE_URL) {
   console.warn('⚠️ DATABASE_URL belum diset di environment variables. Menggunakan placeholder (koneksi akan gagal jika query dijalankan).');
 }
 
-const pool = new Pool({
-  connectionString: dbUrl,
-  max: process.env.VERCEL ? 1 : 10,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-  // Auto-enable SSL for cloud databases (like Supabase) even in local development
-  ssl: (process.env.NODE_ENV === 'production' || isCloudDB) ? { rejectUnauthorized: false } : false
-});
+if (!global.__dbPool) {
+  global.__dbPool = new Pool({
+    connectionString: dbUrl,
+    max: process.env.VERCEL ? 1 : 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+    // Auto-enable SSL for cloud databases (like Supabase) even in local development
+    ssl: (process.env.NODE_ENV === 'production' || isCloudDB) ? { rejectUnauthorized: false } : false
+  });
+}
 
-
-module.exports = pool;
+module.exports = global.__dbPool;
