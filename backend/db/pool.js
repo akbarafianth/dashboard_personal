@@ -13,7 +13,7 @@ if (!process.env.DATABASE_URL) {
 
 const pool = new Pool({
   connectionString: dbUrl,
-  max: 20,
+  max: process.env.VERCEL ? 1 : 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
   // Auto-enable SSL for cloud databases (like Supabase) even in local development
