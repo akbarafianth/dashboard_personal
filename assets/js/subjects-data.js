@@ -50,9 +50,14 @@ function renderSubjects(subjects) {
           <span class="px-space-xs py-space-3xs rounded bg-surface-container-high text-outline font-label-sm text-label-sm">${escapeHtml(creditsText)}</span>
           ${subject.grade ? `<span class="px-space-xs py-space-3xs rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold ml-2">Nilai: ${subject.grade}</span>` : ''}
         </div>
-        <button class="opacity-0 group-hover:opacity-100 text-outline hover:text-error transition-all p-1" title="Hapus mata kuliah" data-delete-subject="${subject.id}">
-          <span class="material-symbols-outlined text-[18px]">delete</span>
-        </button>
+        <div class="flex items-center gap-space-3xs">
+          <button class="opacity-0 group-hover:opacity-100 text-outline hover:text-primary transition-all p-1" title="Edit mata kuliah" data-edit-subject='${JSON.stringify(subject).replace(/'/g, "&#39;")}'>
+            <span class="material-symbols-outlined text-[18px]">edit</span>
+          </button>
+          <button class="opacity-0 group-hover:opacity-100 text-outline hover:text-error transition-all p-1" title="Hapus mata kuliah" data-delete-subject="${subject.id}">
+            <span class="material-symbols-outlined text-[18px]">delete</span>
+          </button>
+        </div>
       </div>
       <h4 class="font-title-md text-title-md text-on-surface font-semibold line-clamp-1">${escapeHtml(subject.name)}</h4>
       <div class="flex flex-col gap-space-3xs text-outline font-body-sm text-body-sm">
@@ -173,6 +178,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   openButton?.addEventListener('click', () => {
+    const modalTitle = document.getElementById('modalTitle');
+    if (modalTitle) modalTitle.textContent = 'Tambah Mata Kuliah Baru';
+    delete saveButton.dataset.editId;
+    
+    // Reset form
+    if (formFields.name) formFields.name.value = '';
+    if (formFields.code) formFields.code.value = '';
+    if (formFields.lecturer) formFields.lecturer.value = '';
+    if (formFields.scheduleTime) formFields.scheduleTime.value = '';
+    if (formFields.room) formFields.room.value = '';
+    if (formFields.grade) formFields.grade.value = '';
+
     modal?.classList.remove('hidden');
     updateLivePreview(formFields);
   });
@@ -195,19 +212,28 @@ document.addEventListener('DOMContentLoaded', () => {
     saveButton.textContent = 'Menyimpan...';
 
     try {
-      await subjectRequest('/subjects', {
-        method: 'POST',
-        body: JSON.stringify({
-          name: name,
-          code: formFields.code?.value?.trim() || '',
-          credits: parseInt(formFields.credits?.value, 10) || 3,
-          lecturer: formFields.lecturer?.value?.trim() || '',
-          schedule_day: formFields.day?.value || 'Senin',
-          schedule_time: formFields.scheduleTime?.value?.trim() || '',
-          room_or_link: formFields.room?.value?.trim() || '',
-          grade: formFields.grade?.value || ''
-        })
-      });
+      const payload = {
+        name: name,
+        code: formFields.code?.value?.trim() || '',
+        credits: parseInt(formFields.credits?.value, 10) || 3,
+        lecturer: formFields.lecturer?.value?.trim() || '',
+        schedule_day: formFields.day?.value || 'Senin',
+        schedule_time: formFields.scheduleTime?.value?.trim() || '',
+        room_or_link: formFields.room?.value?.trim() || '',
+        grade: formFields.grade?.value || ''
+      };
+
+      if (saveButton.dataset.editId) {
+        await subjectRequest(`/subjects/${saveButton.dataset.editId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(payload)
+        });
+      } else {
+        await subjectRequest('/subjects', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+      }
 
       // Reset form
       if (formFields.name) formFields.name.value = '';
@@ -230,8 +256,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // Event delegation for delete buttons
   const container = document.getElementById('subjects-cards-container') || document.getElementById('subjects-list');
   container?.addEventListener('click', async (e) => {
+    const editBtn = e.target.closest('[data-edit-subject]');
+    if (editBtn) {
+      e.stopPropagation();
+      const subjectData = JSON.parse(editBtn.getAttribute('data-edit-subject'));
+      if (formFields.name) formFields.name.value = subjectData.name || '';
+      if (formFields.code) formFields.code.value = subjectData.code || '';
+      if (formFields.credits) formFields.credits.value = subjectData.credits || '3';
+      if (formFields.lecturer) formFields.lecturer.value = subjectData.lecturer || '';
+      if (formFields.day) formFields.day.value = subjectData.schedule_day || 'Senin';
+      if (formFields.scheduleTime) formFields.scheduleTime.value = subjectData.schedule_time || '';
+      if (formFields.room) formFields.room.value = subjectData.room_or_link || '';
+      if (formFields.grade) formFields.grade.value = subjectData.grade || '';
+
+      const modalTitle = document.getElementById('modalTitle');
+      if (modalTitle) modalTitle.textContent = 'Edit Mata Kuliah';
+
+      saveButton.dataset.editId = subjectData.id;
+      modal?.classList.remove('hidden');
+      updateLivePreview(formFields);
+      return;
+    }
+
     const deleteBtn = e.target.closest('[data-delete-subject]');
     if (!deleteBtn) return;
+    e.stopPropagation();
     const subjectId = deleteBtn.getAttribute('data-delete-subject');
     if (!subjectId) return;
 
