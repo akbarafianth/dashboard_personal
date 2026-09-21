@@ -1,3 +1,55 @@
+
+let currentTaskView = 'kanban';
+
+function switchTaskView(view) {
+  currentTaskView = view;
+  const board = document.getElementById('tasks-board');
+  const listContainer = document.getElementById('tasks-list-container');
+  
+  const btnKanban = document.getElementById('btn-view-kanban');
+  const btnList = document.getElementById('btn-view-list');
+  const btnHistory = document.getElementById('btn-view-history');
+  
+  if(btnKanban) { btnKanban.className = view === 'kanban' ? 'flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface bg-surface-container font-label-md text-label-md transition-colors' : 'flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors'; }
+  if(btnList) { btnList.className = view === 'list' ? 'flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface bg-surface-container font-label-md text-label-md transition-colors' : 'flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors'; }
+  if(btnHistory) { btnHistory.className = view === 'history' ? 'flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface bg-surface-container font-label-md text-label-md transition-colors' : 'flex items-center gap-space-xs px-space-md py-space-xs rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors'; }
+
+  if(board && listContainer) {
+    if(view === 'kanban') {
+      board.classList.remove('hidden');
+      board.classList.add('grid');
+      listContainer.classList.add('hidden');
+      listContainer.classList.remove('flex');
+    } else {
+      board.classList.add('hidden');
+      board.classList.remove('grid');
+      listContainer.classList.remove('hidden');
+      listContainer.classList.add('flex');
+    }
+  }
+  
+  renderTasks(allTasks);
+}
+
+// Ensure allTasks is available globally
+let allTasks = [];
+
+
+function loadSubjectsForTasks() {
+  const html = '<option value="">Tanpa Mata Kuliah</option>' + `
+<option value="SE [A] P1">SE [A] P1 – Senin, 07.30 - 10.00</option>
+<option value="ASD [A] P1">ASD [A] P1 – Selasa, 07.30 - 10.00</option>
+<option value="ADD [A]">ADD [A] – Selasa, 13.30 - 16.00</option>
+<option value="ABD [A]">ABD [A] – Rabu, 10.15 - 12.45</option>
+<option value="SE [A] P2">SE [A] P2 – Rabu, 13.30 - 16.00</option>
+<option value="MPT [A]">MPT [A] – Kamis, 07.30 - 10.00</option>
+<option value="ASD [A] P2">ASD [A] P2 – Kamis, 13.30 - 16.00</option>
+<option value="RO [A]">RO [A] – Jumat, 07.30 - 10.00</option>
+`;
+  const select = document.getElementById('modal-subject');
+  if (select) select.innerHTML = html;
+}
+
 const API_BASE = window.API_BASE;
 async function taskRequest(path, options) {
   const response = await fetch(`${API_BASE}${path}`, {
@@ -122,7 +174,8 @@ async function loadAnalytics() {
 }
 
 async function loadTasks() {
-  renderTasks(await taskRequest('/tasks'));
+  allTasks = await taskRequest('/tasks');
+    renderTasks(allTasks);
   await loadAnalytics();
 }
 
@@ -174,6 +227,43 @@ document.addEventListener('DOMContentLoaded', async () => {
   const closeModal = () => {
     if (newTaskModal) newTaskModal.classList.add('hidden');
   };
+
+  
+  // Event delegation for list view checkboxes and delete buttons
+  const listContainer = document.getElementById('tasks-list-container');
+  if(listContainer) {
+    listContainer.addEventListener('click', async (e) => {
+      const toggle = e.target.closest('[data-toggle-task]');
+      if (toggle) {
+        const taskId = toggle.getAttribute('data-toggle-task');
+        const newStatus = toggle.checked ? 'completed' : 'pending';
+        toggle.disabled = true;
+        try {
+          await taskRequest(`/tasks/${taskId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: newStatus })
+          });
+          await loadTasks();
+        } catch(err) {
+          toggle.disabled = false;
+          toggle.checked = !toggle.checked;
+        }
+      }
+
+      const delBtn = e.target.closest('[data-delete-task]');
+      if (delBtn) {
+        const taskId = delBtn.getAttribute('data-delete-task');
+        if (!confirm('Apakah Anda yakin ingin menghapus tugas ini?')) return;
+        delBtn.disabled = true;
+        try {
+          await taskRequest(`/tasks/${taskId}`, { method: 'DELETE' });
+          await loadTasks();
+        } catch(err) {
+          delBtn.disabled = false;
+        }
+      }
+    });
+  }
 
   btnNewTask?.addEventListener('click', openModal);
   closeTaskModalBtn?.addEventListener('click', closeModal);

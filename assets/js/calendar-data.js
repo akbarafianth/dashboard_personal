@@ -610,17 +610,7 @@ function navigateCalendar(direction) {
 }
 
 
-async function loadSubjectsForCalendar() {
-  try {
-    const response = await fetch(`${API_BASE}/subjects`);
-    if (!response.ok) return;
-    const subjects = await response.json();
-    const selects = [document.getElementById('event-subject'), document.getElementById('modal-subject')];
-    selects.forEach(select => {
-      if (select) {
-        select.innerHTML = '<option value="">Umum / Non-Matkul</option>';
-      }
-    });
+);
     
     subjects.forEach(sub => {
       const code = sub.code || 'MK';
@@ -635,6 +625,22 @@ async function loadSubjectsForCalendar() {
   } catch (err) {
     console.error('Failed to load subjects', err);
   }
+}
+
+
+function loadSubjectsForCalendar() {
+  const html = '<option value="">Umum / Non-Matkul</option>' + `
+<option value="SE [A] P1">SE [A] P1 – Senin, 07.30 - 10.00</option>
+<option value="ASD [A] P1">ASD [A] P1 – Selasa, 07.30 - 10.00</option>
+<option value="ADD [A]">ADD [A] – Selasa, 13.30 - 16.00</option>
+<option value="ABD [A]">ABD [A] – Rabu, 10.15 - 12.45</option>
+<option value="SE [A] P2">SE [A] P2 – Rabu, 13.30 - 16.00</option>
+<option value="MPT [A]">MPT [A] – Kamis, 07.30 - 10.00</option>
+<option value="ASD [A] P2">ASD [A] P2 – Kamis, 13.30 - 16.00</option>
+<option value="RO [A]">RO [A] – Jumat, 07.30 - 10.00</option>
+`;
+  const selects = [document.getElementById('event-subject'), document.getElementById('modal-subject')];
+  selects.forEach(sel => { if(sel) sel.innerHTML = html; });
 }
 
 async function loadEvents() {

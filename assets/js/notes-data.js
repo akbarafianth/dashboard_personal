@@ -195,22 +195,7 @@ async function deleteNote(id) {
 }
 
 
-async function loadSubjectsForNotes() {
-  try {
-    const response = await fetch(`${API_BASE}/subjects`);
-    if (!response.ok) return;
-    const subjects = await response.json();
-    
-    // Deduplicate by code
-    const seenCodes = new Set();
-    const deduped = [];
-    subjects.forEach(sub => {
-      const code = sub.code || 'MK';
-      if (!seenCodes.has(code)) {
-        seenCodes.add(code);
-        deduped.push(sub);
-      }
-    });
+);
 
     // Populate note-subject
     const noteSubjectSelect = document.getElementById('note-subject');
@@ -261,6 +246,25 @@ function loadFolders() {
   });
 }
 
+
+function loadSubjectsForNotes() {
+  const html = '<option value="">Pilih Mata Kuliah</option>' + `
+<option value="SE [A] P1">SE [A] P1 – Senin, 07.30 - 10.00</option>
+<option value="ASD [A] P1">ASD [A] P1 – Selasa, 07.30 - 10.00</option>
+<option value="ADD [A]">ADD [A] – Selasa, 13.30 - 16.00</option>
+<option value="ABD [A]">ABD [A] – Rabu, 10.15 - 12.45</option>
+<option value="SE [A] P2">SE [A] P2 – Rabu, 13.30 - 16.00</option>
+<option value="MPT [A]">MPT [A] – Kamis, 07.30 - 10.00</option>
+<option value="ASD [A] P2">ASD [A] P2 – Kamis, 13.30 - 16.00</option>
+<option value="RO [A]">RO [A] – Jumat, 07.30 - 10.00</option>
+`;
+  const noteSubjectSelect = document.getElementById('note-subject');
+  if (noteSubjectSelect) noteSubjectSelect.innerHTML = html;
+
+  const folderSubjectSelect = document.getElementById('folder-subject');
+  if (folderSubjectSelect) folderSubjectSelect.innerHTML = html;
+}
+
 async function loadNotes() {
   renderNotes(await noteRequest('/notes'));
 }
@@ -278,6 +282,34 @@ document.addEventListener('DOMContentLoaded', () => {
           ['link', 'clean']
         ]
       }
+    });
+  }
+
+  
+  const folderModal = document.getElementById('newFolderModal');
+  const openFolderBtn = document.getElementById('openFolderModalBtn');
+  const closeFolderBtn = document.getElementById('closeFolderModalBtn');
+  const cancelFolderBtn = document.getElementById('cancelFolderBtn');
+  const saveFolderBtn = document.getElementById('save-folder-btn');
+
+  if(openFolderBtn) openFolderBtn.addEventListener('click', () => folderModal?.classList.remove('hidden'));
+  if(closeFolderBtn) closeFolderBtn.addEventListener('click', () => folderModal?.classList.add('hidden'));
+  if(cancelFolderBtn) cancelFolderBtn.addEventListener('click', () => folderModal?.classList.add('hidden'));
+
+  if(saveFolderBtn) {
+    saveFolderBtn.addEventListener('click', () => {
+      const name = document.getElementById('folder-name').value;
+      const subId = document.getElementById('folder-subject').value;
+      if (!name) return alert('Nama folder harus diisi!');
+      
+      const newFolder = { id: Date.now().toString(), name, subject_id: subId };
+      allFolders.push(newFolder);
+      localStorage.setItem('notes_folders', JSON.stringify(allFolders));
+      
+      loadFolders();
+      folderModal.classList.add('hidden');
+      if (window.showToast) window.showToast('Folder berhasil dibuat', 'success');
+      document.getElementById('folder-name').value = '';
     });
   }
 
