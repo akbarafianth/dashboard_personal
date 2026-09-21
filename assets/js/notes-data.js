@@ -170,6 +170,8 @@ async function uploadAttachment(noteId, file) {
     
     // Refresh detail and list
     await loadNotes();
+    loadSubjectsForNotes();
+    loadFolders();
     // Fetch updated note to re-render detail
     const updatedNote = await noteRequest(`/notes/${noteId}`, { method: 'GET' });
     renderNoteDetail(updatedNote);
@@ -190,6 +192,73 @@ async function deleteNote(id) {
     }
     await loadNotes();
   }
+}
+
+
+async function loadSubjectsForNotes() {
+  try {
+    const response = await fetch(`${API_BASE}/subjects`);
+    if (!response.ok) return;
+    const subjects = await response.json();
+    
+    // Deduplicate by code
+    const seenCodes = new Set();
+    const deduped = [];
+    subjects.forEach(sub => {
+      const code = sub.code || 'MK';
+      if (!seenCodes.has(code)) {
+        seenCodes.add(code);
+        deduped.push(sub);
+      }
+    });
+
+    // Populate note-subject
+    const noteSubjectSelect = document.getElementById('note-subject');
+    if (noteSubjectSelect) {
+      noteSubjectSelect.innerHTML = '<option value="">Pilih Mata Kuliah</option>';
+      deduped.forEach(sub => {
+        const option = document.createElement('option');
+        option.value = sub.id;
+        option.textContent = `${sub.code || ''} - ${sub.schedule_day || ''} - ${sub.schedule_time || ''}`;
+        noteSubjectSelect.appendChild(option);
+      });
+    }
+
+    // Populate folder-subject
+    const folderSubjectSelect = document.getElementById('folder-subject');
+    if (folderSubjectSelect) {
+      folderSubjectSelect.innerHTML = '<option value="">Pilih Mata Kuliah</option>';
+      deduped.forEach(sub => {
+        const option = document.createElement('option');
+        option.value = sub.id;
+        option.textContent = `${sub.code || ''} - ${sub.name || ''}`;
+        folderSubjectSelect.appendChild(option);
+      });
+    }
+  } catch (err) {
+    console.error('Failed to load subjects', err);
+  }
+}
+
+// Global state to store folders
+let allFolders = [];
+
+function loadFolders() {
+  const noteFolderSelect = document.getElementById('note-folder');
+  if (!noteFolderSelect) return;
+  // Use localStorage or just a dummy array for folders since backend doesn't have a folder table,
+  // OR we can derive folders from notes.tags if needed.
+  // For now we just implement the UI logic with localStorage.
+  const stored = localStorage.getItem('notes_folders');
+  allFolders = stored ? JSON.parse(stored) : [];
+  
+  noteFolderSelect.innerHTML = '<option value="">Tanpa Folder</option>';
+  allFolders.forEach(f => {
+    const option = document.createElement('option');
+    option.value = f.id;
+    option.textContent = f.name;
+    noteFolderSelect.appendChild(option);
+  });
 }
 
 async function loadNotes() {

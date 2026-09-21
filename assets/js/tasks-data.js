@@ -18,6 +18,12 @@ const columns = [
   { status: 'cancelled', title: 'Dibatalkan', color: 'bg-error' }
 ];
 
+
+function createCheckboxHtml(task) {
+  const isChecked = task.status === 'completed' ? 'checked' : '';
+  return `<input type="checkbox" class="w-5 h-5 rounded border-outline focus:ring-primary text-primary bg-surface-container cursor-pointer" data-toggle-task="${task.id}" ${isChecked}>`;
+}
+
 function renderTasks(tasks) {
   const board = document.getElementById('tasks-board');
   if (!board) return;
@@ -124,6 +130,14 @@ let hasShownUrgentToast = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
   renderHeaderDate();
+
+  const btnKanban = document.getElementById('btn-view-kanban');
+  const btnList = document.getElementById('btn-view-list');
+  const btnHistory = document.getElementById('btn-view-history');
+  if(btnKanban) btnKanban.addEventListener('click', () => switchTaskView('kanban'));
+  if(btnList) btnList.addEventListener('click', () => switchTaskView('list'));
+  if(btnHistory) btnHistory.addEventListener('click', () => switchTaskView('history'));
+
   try {
     await loadTasks();
     const analytics = await loadAnalytics();
@@ -197,7 +211,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           deadline: new Date(deadline).toISOString(),
           priority,
           estimated_hours,
-          status: 'pending'
+          status: 'pending',
+          subject_id: document.getElementById('modal-subject')?.value || null
         })
       });
 

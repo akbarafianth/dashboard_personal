@@ -609,6 +609,34 @@ function navigateCalendar(direction) {
   renderCalendar();
 }
 
+
+async function loadSubjectsForCalendar() {
+  try {
+    const response = await fetch(`${API_BASE}/subjects`);
+    if (!response.ok) return;
+    const subjects = await response.json();
+    const selects = [document.getElementById('event-subject'), document.getElementById('modal-subject')];
+    selects.forEach(select => {
+      if (select) {
+        select.innerHTML = '<option value="">Umum / Non-Matkul</option>';
+      }
+    });
+    
+    subjects.forEach(sub => {
+      const code = sub.code || 'MK';
+      const day = sub.schedule_day || '-';
+      const time = sub.schedule_time || '-';
+      // If time format is "08:00 - 10:00", we just use it directly
+      const option = document.createElement('option');
+      option.value = sub.id;
+      option.textContent = `${code} - ${day} - ${time}`;
+      selects.forEach(select => { if(select) select.appendChild(option.cloneNode(true)); });
+    });
+  } catch (err) {
+    console.error('Failed to load subjects', err);
+  }
+}
+
 async function loadEvents() {
   try {
     const [eventsData, tasksData, analyticsData] = await Promise.all([
@@ -719,6 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         await apiRequest(`/events/${eventId}`, { method: 'DELETE' });
         await loadEvents();
+    loadSubjectsForCalendar();
       } catch (err) {
         alert(`Gagal menghapus agenda: ${err.message}`);
       }
@@ -758,7 +787,8 @@ document.addEventListener('DOMContentLoaded', () => {
             event_date: `${date}T${time}:00`,
             category,
             priority,
-            description
+            description,
+            subject_id: document.getElementById('event-subject')?.value || null
           })
         });
 
@@ -805,12 +835,13 @@ document.addEventListener('DOMContentLoaded', () => {
       await apiRequest('/events', {
         method: 'POST',
         body: JSON.stringify({
-          title,
-          event_date: `${date}T${time}:00`,
-          category,
-          priority,
-          description
-        })
+            title,
+            event_date: `${date}T${time}:00`,
+            category,
+            priority,
+            description,
+            subject_id: document.getElementById('event-subject') ? document.getElementById('event-subject').value : (document.getElementById('modal-subject') ? document.getElementById('modal-subject').value : null)
+          })
       });
 
       // Reset & close
