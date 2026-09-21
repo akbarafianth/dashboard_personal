@@ -82,14 +82,48 @@ function renderSubjects(subjects) {
   });
 }
 
+let allSubjects = [];
+
 async function loadSubjects() {
   try {
-    const subjects = await subjectRequest('/subjects');
-    renderSubjects(subjects);
-    calculateAndSyncGPA(subjects);
+    allSubjects = await subjectRequest('/subjects');
+    applyFiltersAndSort();
+    calculateAndSyncGPA(allSubjects);
   } catch (error) {
     console.error('Gagal memuat mata kuliah:', error);
   }
+}
+
+function applyFiltersAndSort() {
+  const dayFilterVal = document.getElementById('filter-day-select')?.value || 'Semua Hari';
+  const sortVal = document.getElementById('sort-day-select')?.value || 'asc';
+  const searchVal = document.getElementById('search-subject-input')?.value.toLowerCase() || '';
+
+  let filtered = allSubjects.filter(sub => {
+    if (searchVal) {
+       const term = `${sub.name} ${sub.code} ${sub.lecturer}`.toLowerCase();
+       if (!term.includes(searchVal)) return false;
+    }
+    if (dayFilterVal !== 'Semua Hari' && dayFilterVal !== 'Semua Hari (Senin - Sabtu)') {
+      if (sub.schedule_day !== dayFilterVal) return false;
+    }
+    return true;
+  });
+
+  const dayMap = { 'Senin': 1, 'Selasa': 2, 'Rabu': 3, 'Kamis': 4, 'Jumat': 5, 'Sabtu': 6, 'Minggu': 7 };
+
+  filtered.sort((a, b) => {
+    const dayA = dayMap[a.schedule_day] || 99;
+    const dayB = dayMap[b.schedule_day] || 99;
+    if (dayA !== dayB) {
+      return sortVal === 'asc' ? dayA - dayB : dayB - dayA;
+    }
+    const timeA = a.schedule_time || '23:59';
+    const timeB = b.schedule_time || '23:59';
+    return sortVal === 'asc' ? timeA.localeCompare(timeB) : timeB.localeCompare(timeA);
+  });
+
+  renderSubjects(filtered);
 }
 
 async function calculateAndSyncGPA(subjects) {
@@ -293,6 +327,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+
+  const searchInput = document.getElementById('search-subject-input');
+  const dayFilter = document.getElementById('filter-day-select');
+  const sortFilter = document.getElementById('sort-day-select');
+
+  if (searchInput) searchInput.addEventListener('input', applyFiltersAndSort);
+  if (dayFilter) dayFilter.addEventListener('change', applyFiltersAndSort);
+  if (sortFilter) sortFilter.addEventListener('change', applyFiltersAndSort);
 
   renderHeaderDate();
   loadSubjects();
