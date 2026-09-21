@@ -1,5 +1,5 @@
 // notifications.js
-document.addEventListener('DOMContentLoaded', () => {
+function initNotifications() {
   // Cari ikon bel notifikasi di header
   const bellContainers = document.querySelectorAll('header button');
   let notificationBtn = null;
@@ -127,4 +127,4 @@ document.addEventListener('DOMContentLoaded', () => {
   window.setInterval(() => {
     if (!document.hidden) loadNotifications();
   }, 5000);
-});
+} document.addEventListener('DOMContentLoaded', initNotifications); window.addEventListener('pageChanged', initNotifications);

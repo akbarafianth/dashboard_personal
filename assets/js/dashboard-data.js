@@ -318,7 +318,7 @@ async function loadDashboardData() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initDashboard() {
   document.querySelectorAll('[data-open-dashboard-settings]').forEach((button) => {
     button.addEventListener('click', openSettingsModal);
   });
@@ -383,13 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderHeaderDate();
   loadDashboardData().catch(() => {});
   window.setInterval(() => { if (!document.hidden) loadDashboardData().catch(() => {}); }, 5000);
-});
-
-
-
-
-
-if (!window.syncChannel) {
+} document.addEventListener('DOMContentLoaded', initDashboard); window.addEventListener('pageChanged', initDashboard); if (!window.syncChannel) {
   window.syncChannel = new BroadcastChannel('academiq_sync');
   window.syncChannel.onmessage = (event) => {
     if (event.data === 'REFRESH') {
@@ -402,3 +396,4 @@ if (!window.syncChannel) {
     }
   };
 }
+

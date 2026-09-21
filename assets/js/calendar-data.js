@@ -660,7 +660,7 @@ async function loadEvents() {
 // DOM Initialization
 // -------------------------------------------------------------
 
-document.addEventListener('DOMContentLoaded', () => {
+function initCalendar() {
   // Navigation Buttons
   const prevBtn = document.getElementById('prev-month-btn');
   const nextBtn = document.getElementById('next-month-btn');
@@ -830,12 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCalendar(); // Memaksa render kosong pada awal muat agar tidak blank
   loadEvents();
   window.setInterval(() => { if (!document.hidden) loadEvents(); }, 5000);
-});
-
-
-
-
-if (!window.syncChannel) {
+} document.addEventListener('DOMContentLoaded', initCalendar); window.addEventListener('pageChanged', initCalendar); if (!window.syncChannel) {
   window.syncChannel = new BroadcastChannel('academiq_sync');
   window.syncChannel.onmessage = (event) => {
     if (event.data === 'REFRESH') {
@@ -848,3 +843,4 @@ if (!window.syncChannel) {
     }
   };
 }
+

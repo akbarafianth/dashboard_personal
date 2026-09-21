@@ -185,7 +185,7 @@ function updateLivePreview(fields) {
   if (previewLecturer) previewLecturer.textContent = `${lecturerVal} • ${dayVal} ${timeVal}`;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initSubjects() {
   const modal = document.getElementById('newCourseModal');
   const openButton = document.getElementById('openNewCourseModal');
   const closeButton = document.getElementById('closeCourseModal');
@@ -339,12 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderHeaderDate();
   loadSubjects();
   window.setInterval(() => { if (!document.hidden) loadSubjects(); }, 5000);
-});
-
-
-
-
-if (!window.syncChannel) {
+} document.addEventListener('DOMContentLoaded', initSubjects); window.addEventListener('pageChanged', initSubjects); if (!window.syncChannel) {
   window.syncChannel = new BroadcastChannel('academiq_sync');
   window.syncChannel.onmessage = (event) => {
     if (event.data === 'REFRESH') {
@@ -357,3 +352,4 @@ if (!window.syncChannel) {
     }
   };
 }
+

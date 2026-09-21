@@ -122,7 +122,7 @@ async function loadTasks() {
 
 let hasShownUrgentToast = false;
 
-document.addEventListener('DOMContentLoaded', async () => {
+async function initTasks() {
   renderHeaderDate();
   try {
     await loadTasks();
@@ -219,13 +219,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   window.setInterval(() => { if (!document.hidden) loadTasks().catch(() => {}); }, 5000);
-});
-
-
-
-
-
-if (!window.syncChannel) {
+} document.addEventListener('DOMContentLoaded', initTasks); window.addEventListener('pageChanged', initTasks); if (!window.syncChannel) {
   window.syncChannel = new BroadcastChannel('academiq_sync');
   window.syncChannel.onmessage = (event) => {
     if (event.data === 'REFRESH') {
@@ -238,3 +232,4 @@ if (!window.syncChannel) {
     }
   };
 }
+
