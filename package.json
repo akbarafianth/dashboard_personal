@@ -9,21 +9,24 @@
     "db:setup": "node backend/scripts/setup_db.js",
     "db:seed": "node backend/scripts/seed.js",
     "db:verify": "node backend/scripts/verify_neon.js",
+    "db:migrate": "node backend/scripts/run_migrations.js",
     "migrate:direct": "node backend/scripts/migrate_supabase_to_neon.js",
     "migrate:import-dump": "node backend/scripts/migrate_import_from_dump.js"
   },
   "dependencies": {
+    "@foliojs-fork/pdfkit": "^0.15.3",
     "@vercel/blob": "^2.8.2",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
     "dompurify": "^3.0.6",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^8.7.0",
     "jsdom": "^22.1.0",
+    "jsonwebtoken": "^9.0.3",
     "marked": "^18.0.12",
     "morgan": "^1.12.1",
     "multer": "^2.3.0",
-    "pdfmake": "^0.2.0",
     "pg": "^8.13.1"
   }
 }

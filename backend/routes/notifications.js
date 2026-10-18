@@ -10,7 +10,8 @@ router.get('/', async (_req, res, next) => {
       SELECT id, title, deadline as target_date, 'task' as type,
              EXTRACT(EPOCH FROM (deadline - NOW()))/3600 as hours_left
       FROM tasks
-      WHERE status NOT IN ('completed', 'cancelled')
+      WHERE user_id = $1
+        AND status NOT IN ('completed', 'cancelled')
         AND deadline <= NOW() + INTERVAL '48 hours'
         AND deadline > NOW()
     `;
@@ -20,13 +21,14 @@ router.get('/', async (_req, res, next) => {
       SELECT id, title, event_date as target_date, 'event' as type,
              EXTRACT(EPOCH FROM (event_date - NOW()))/3600 as hours_left
       FROM events
-      WHERE event_date <= NOW() + INTERVAL '48 hours'
+      WHERE user_id = $1
+        AND event_date <= NOW() + INTERVAL '48 hours'
         AND event_date > NOW()
     `;
 
     const [tasksRes, eventsRes] = await Promise.all([
-      pool.query(tasksQuery),
-      pool.query(eventsQuery)
+      pool.query(tasksQuery, [req.user.userId]),
+      pool.query(eventsQuery, [req.user.userId])
     ]);
 
     // Format & Gabung hasil

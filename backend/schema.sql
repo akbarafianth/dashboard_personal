@@ -1,5 +1,15 @@
+CREATE TABLE IF NOT EXISTS users (
+  id BIGSERIAL PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL,
+  name TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS subjects (
   id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   code TEXT,
   lecturer TEXT,
@@ -17,6 +27,7 @@ CREATE TABLE IF NOT EXISTS subjects (
 
 CREATE TABLE IF NOT EXISTS tasks (
   id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
   deadline TIMESTAMPTZ NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'in_progress', 'completed', 'cancelled')),
@@ -32,6 +43,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 
 CREATE TABLE IF NOT EXISTS events (
   id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
   event_date TIMESTAMPTZ NOT NULL,
   description TEXT,
@@ -48,6 +60,7 @@ CREATE TABLE IF NOT EXISTS events (
 
 CREATE TABLE IF NOT EXISTS notes (
   id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
   content TEXT NOT NULL,
   note_date DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -60,7 +73,8 @@ CREATE TABLE IF NOT EXISTS notes (
 );
 
 CREATE TABLE IF NOT EXISTS dashboard_settings (
-  id SMALLINT PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
   display_name TEXT NOT NULL DEFAULT 'Akbar Ariffianto',
   semester TEXT NOT NULL DEFAULT 'Semester Ganjil 2026/2027',
   gpa NUMERIC(3,2) NOT NULL DEFAULT 3.73 CHECK (gpa >= 0 AND gpa <= 4),

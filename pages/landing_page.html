@@ -107,8 +107,22 @@
       Selamat datang Akbar, jangan lupa untuk cek catatan dan jangan males.
     </p>
 
+    <div id="auth-panel" class="stagger-4 mt-8 flex flex-col gap-3 w-full max-w-md p-4 rounded-xl bg-surface-card/90 border border-surface-border">
+      <div class="flex gap-2">
+        <button id="auth-login-tab" type="button" class="flex-1 rounded-lg bg-indigo-600 px-3 py-2 text-sm text-white">Login</button>
+        <button id="auth-register-tab" type="button" class="flex-1 rounded-lg bg-slate-800 px-3 py-2 text-sm text-slate-300">Daftar</button>
+      </div>
+      <form id="auth-form" class="flex flex-col gap-3">
+        <input id="auth-name" class="hidden rounded-lg bg-slate-900 px-3 py-2 text-sm text-white" type="text" placeholder="Nama">
+        <input id="auth-email" class="rounded-lg bg-slate-900 px-3 py-2 text-sm text-white" type="email" placeholder="Email" required>
+        <input id="auth-password" class="rounded-lg bg-slate-900 px-3 py-2 text-sm text-white" type="password" placeholder="Password minimal 8 karakter" minlength="8" required>
+        <button id="auth-submit" class="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white" type="submit">Masuk</button>
+        <p id="auth-message" class="text-center text-xs text-slate-400"></p>
+      </form>
+    </div>
+
     <!-- Main Enter Buttons / CTA -->
-    <div class="stagger-4 mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md">
+    <div id="workspace-actions" class="hidden stagger-4 mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md">
       <!-- Primary Button to Workspace -->
       <a href="dashboard_akademik_utama.html"
         class="group relative w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold text-sm sm:text-base shadow-xl shadow-indigo-600/30 hover:shadow-indigo-500/50 transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] border border-indigo-400/30 animate-glow-border">

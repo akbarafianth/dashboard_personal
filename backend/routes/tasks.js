@@ -5,7 +5,7 @@ const { buildInsert, buildUpdate } = require('./_helpers');
 
 const config = {
   table: 'tasks',
-  columns: ['title', 'deadline', 'status', 'subject_id', 'description', 'priority', 'estimated_hours', 'is_recurring', 'reminder_time'],
+  columns: ['title', 'deadline', 'status', 'subject_id', 'description', 'priority', 'estimated_hours', 'is_recurring', 'reminder_time', 'user_id'],
   required: ['title', 'deadline']
 };
 
@@ -52,9 +52,9 @@ router.get('/', async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit, 10) || 200;
     const query = req.query.status === 'active'
-      ? `SELECT t.*, s.name AS subject_name, s.color_theme FROM ${config.table} t LEFT JOIN subjects s ON t.subject_id = s.id WHERE t.status NOT IN ('completed', 'cancelled') ORDER BY t.deadline ASC LIMIT $1`
-      : `SELECT t.*, s.name AS subject_name, s.color_theme FROM ${config.table} t LEFT JOIN subjects s ON t.subject_id = s.id ORDER BY t.deadline ASC LIMIT $1`;
-    const result = await pool.query(query, [limit]);
+      ? `SELECT t.*, s.name AS subject_name, s.color_theme FROM ${config.table} t LEFT JOIN subjects s ON t.subject_id = s.id WHERE t.user_id = $1 AND t.status NOT IN ('completed', 'cancelled') ORDER BY t.deadline ASC LIMIT $2`
+      : `SELECT t.*, s.name AS subject_name, s.color_theme FROM ${config.table} t LEFT JOIN subjects s ON t.subject_id = s.id WHERE t.user_id = $1 ORDER BY t.deadline ASC LIMIT $2`;
+    const result = await pool.query(query, [req.user.userId, limit]);
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -64,7 +64,7 @@ router.get('/', async (req, res, next) => {
 // GET /api/tasks/:id
 router.get('/:id', async (req, res, next) => {
   try {
-    const result = await pool.query(`SELECT t.*, s.name AS subject_name, s.color_theme FROM ${config.table} t LEFT JOIN subjects s ON t.subject_id = s.id WHERE t.id = $1`, [req.params.id]);
+    const result = await pool.query(`SELECT t.*, s.name AS subject_name, s.color_theme FROM ${config.table} t LEFT JOIN subjects s ON t.subject_id = s.id WHERE t.id = $1 AND t.user_id = $2`, [req.params.id, req.user.userId]);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Data tidak ditemukan' });
     }
@@ -81,6 +81,13 @@ router.post('/', async (req, res, next) => {
     if (validationError) {
       return res.status(400).json({ error: validationError });
     }
+    if (req.body.subject_id !== undefined && req.body.subject_id !== null) {
+      const subject = await pool.query('SELECT id FROM subjects WHERE id = $1 AND user_id = $2', [req.body.subject_id, req.user.userId]);
+      if (subject.rowCount === 0) {
+        return res.status(400).json({ error: 'subject_id tidak valid' });
+      }
+    }
+    req.body.user_id = req.user.userId;
     const { fields, values, placeholders } = buildInsert(req.body, config);
     const result = await pool.query(
       `INSERT INTO ${config.table} (${fields.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *`,
@@ -95,13 +102,20 @@ router.post('/', async (req, res, next) => {
 // PATCH /api/tasks/:id
 router.patch('/:id', async (req, res, next) => {
   try {
+    delete req.body.user_id;
+    if (req.body.subject_id !== undefined && req.body.subject_id !== null) {
+      const subject = await pool.query('SELECT id FROM subjects WHERE id = $1 AND user_id = $2', [req.body.subject_id, req.user.userId]);
+      if (subject.rowCount === 0) {
+        return res.status(400).json({ error: 'subject_id tidak valid' });
+      }
+    }
     const { values, assignments } = buildUpdate(req.body, config);
     if (assignments.length === 0) {
       return res.status(400).json({ error: 'Tidak ada field untuk diperbarui' });
     }
-    values.push(req.params.id);
+    values.push(req.params.id, req.user.userId);
     const result = await pool.query(
-      `UPDATE ${config.table} SET ${assignments.join(', ')}, updated_at = NOW() WHERE id = $${values.length} RETURNING *`,
+      `UPDATE ${config.table} SET ${assignments.join(', ')}, updated_at = NOW() WHERE id = $${values.length - 1} AND user_id = $${values.length} RETURNING *`,
       values
     );
     if (result.rowCount === 0) {
@@ -116,7 +130,7 @@ router.patch('/:id', async (req, res, next) => {
 // DELETE /api/tasks/:id
 router.delete('/:id', async (req, res, next) => {
   try {
-    const result = await pool.query(`DELETE FROM ${config.table} WHERE id = $1 RETURNING id`, [req.params.id]);
+    const result = await pool.query(`DELETE FROM ${config.table} WHERE id = $1 AND user_id = $2 RETURNING id`, [req.params.id, req.user.userId]);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Data tidak ditemukan' });
     }

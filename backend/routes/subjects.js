@@ -5,7 +5,7 @@ const { buildInsert, buildUpdate } = require('./_helpers');
 
 const config = {
   table: 'subjects',
-  columns: ['name', 'code', 'lecturer', 'credits', 'key_takeaways', 'schedule_day', 'schedule_time', 'room_or_link', 'attachment_url', 'grade', 'color_theme'],
+  columns: ['name', 'code', 'lecturer', 'credits', 'key_takeaways', 'schedule_day', 'schedule_time', 'room_or_link', 'attachment_url', 'grade', 'color_theme', 'user_id'],
   required: ['name']
 };
 
@@ -40,7 +40,7 @@ function validatePayload(payload, config) {
 router.get('/', async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit, 10) || 200;
-    const result = await pool.query(`SELECT * FROM ${config.table} ORDER BY created_at DESC LIMIT $1`, [limit]);
+    const result = await pool.query(`SELECT * FROM ${config.table} WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2`, [req.user.userId, limit]);
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -50,7 +50,7 @@ router.get('/', async (req, res, next) => {
 // GET /api/subjects/:id
 router.get('/:id', async (req, res, next) => {
   try {
-    const result = await pool.query(`SELECT * FROM ${config.table} WHERE id = $1`, [req.params.id]);
+    const result = await pool.query(`SELECT * FROM ${config.table} WHERE id = $1 AND user_id = $2`, [req.params.id, req.user.userId]);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Data tidak ditemukan' });
     }
@@ -67,6 +67,7 @@ router.post('/', async (req, res, next) => {
     if (validationError) {
       return res.status(400).json({ error: validationError });
     }
+    req.body.user_id = req.user.userId;
     const { fields, values, placeholders } = buildInsert(req.body, config);
     const result = await pool.query(
       `INSERT INTO ${config.table} (${fields.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *`,
@@ -81,13 +82,14 @@ router.post('/', async (req, res, next) => {
 // PATCH /api/subjects/:id
 router.patch('/:id', async (req, res, next) => {
   try {
+    delete req.body.user_id;
     const { values, assignments } = buildUpdate(req.body, config);
     if (assignments.length === 0) {
       return res.status(400).json({ error: 'Tidak ada field untuk diperbarui' });
     }
-    values.push(req.params.id);
+    values.push(req.params.id, req.user.userId);
     const result = await pool.query(
-      `UPDATE ${config.table} SET ${assignments.join(', ')}, updated_at = NOW() WHERE id = $${values.length} RETURNING *`,
+      `UPDATE ${config.table} SET ${assignments.join(', ')}, updated_at = NOW() WHERE id = $${values.length - 1} AND user_id = $${values.length} RETURNING *`,
       values
     );
     if (result.rowCount === 0) {
@@ -102,7 +104,7 @@ router.patch('/:id', async (req, res, next) => {
 // DELETE /api/subjects/:id
 router.delete('/:id', async (req, res, next) => {
   try {
-    const result = await pool.query(`DELETE FROM ${config.table} WHERE id = $1 RETURNING id`, [req.params.id]);
+    const result = await pool.query(`DELETE FROM ${config.table} WHERE id = $1 AND user_id = $2 RETURNING id`, [req.params.id, req.user.userId]);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Data tidak ditemukan' });
     }

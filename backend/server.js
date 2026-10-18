@@ -5,6 +5,7 @@ const path = require('path');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const pool = require('./db/pool');
+const { requireAuth } = require('./middleware/auth');
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
@@ -43,16 +44,19 @@ app.get('/api/health', async (_req, res, next) => {
   }
 });
 
-// Routes
-app.use('/api/subjects', require('./routes/subjects'));
-app.use('/api/tasks', require('./routes/tasks'));
-app.use('/api/events', require('./routes/events'));
-app.use('/api/notes', require('./routes/notes'));
-app.use('/api/search', require('./routes/search'));
-app.use('/api/upload', require('./routes/upload'));
-app.use('/api/analytics', require('./routes/analytics'));
-app.use('/api/notifications', require('./routes/notifications'));
-app.use('/api', require('./routes/settings'));
+// Auth Routes (Public - no auth required)
+app.use('/api/auth', require('./routes/auth'));
+
+// Protected Routes (Require authentication)
+app.use('/api/subjects', requireAuth, require('./routes/subjects'));
+app.use('/api/tasks', requireAuth, require('./routes/tasks'));
+app.use('/api/events', requireAuth, require('./routes/events'));
+app.use('/api/notes', requireAuth, require('./routes/notes'));
+app.use('/api/search', requireAuth, require('./routes/search'));
+app.use('/api/upload', requireAuth, require('./routes/upload'));
+app.use('/api/analytics', requireAuth, require('./routes/analytics'));
+app.use('/api/notifications', requireAuth, require('./routes/notifications'));
+app.use('/api', requireAuth, require('./routes/settings'));
 
 // Error Handler
 app.use((error, _req, res, _next) => {

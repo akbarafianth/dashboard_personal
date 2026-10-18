@@ -2,6 +2,28 @@
 // Menggunakan relative path agar dinamis (bisa untuk localhost dan domain Vercel)
 window.API_BASE = window.API_BASE || '/api';
 
+const academyFetch = window.fetch.bind(window);
+window.fetch = function(input, options = {}) {
+  const requestUrl = typeof input === 'string' ? input : input.url;
+  const isApiRequest = requestUrl.includes('/api/');
+  const isAuthRequest = requestUrl.includes('/api/auth/');
+  const headers = new Headers(options.headers || (input instanceof Request ? input.headers : undefined));
+  const token = window.localStorage.getItem('academiq_token');
+
+  if (isApiRequest && !isAuthRequest && token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  return academyFetch(input, { ...options, headers }).then((response) => {
+    if (response.status === 401 && !isAuthRequest && !window.location.pathname.endsWith('landing_page.html')) {
+      window.localStorage.removeItem('academiq_token');
+      window.localStorage.removeItem('academiq_user');
+      window.location.href = '/pages/landing_page.html';
+    }
+    return response;
+  });
+};
+
 window.escapeHtml = function(str) {
   if (!str) return '';
   return String(str).replace(/[&<>'"]/g, 

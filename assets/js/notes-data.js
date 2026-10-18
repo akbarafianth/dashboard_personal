@@ -208,37 +208,6 @@ async function deleteNote(id) {
   }
 }
 
-
-);
-
-    // Populate note-subject
-    const noteSubjectSelect = document.getElementById('note-subject');
-    if (noteSubjectSelect) {
-      noteSubjectSelect.innerHTML = '<option value="">Pilih Mata Kuliah</option>';
-      deduped.forEach(sub => {
-        const option = document.createElement('option');
-        option.value = sub.id;
-        option.textContent = `${sub.code || ''} - ${sub.schedule_day || ''} - ${sub.schedule_time || ''}`;
-        noteSubjectSelect.appendChild(option);
-      });
-    }
-
-    // Populate folder-subject
-    const folderSubjectSelect = document.getElementById('folder-subject');
-    if (folderSubjectSelect) {
-      folderSubjectSelect.innerHTML = '<option value="">Pilih Mata Kuliah</option>';
-      deduped.forEach(sub => {
-        const option = document.createElement('option');
-        option.value = sub.id;
-        option.textContent = `${sub.code || ''} - ${sub.name || ''}`;
-        folderSubjectSelect.appendChild(option);
-      });
-    }
-  } catch (err) {
-    console.error('Failed to load subjects', err);
-  }
-}
-
 // Global state to store folders
 let allFolders = [];
 

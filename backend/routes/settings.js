@@ -3,9 +3,9 @@ const router = express.Router();
 const pool = require('../db/pool');
 
 // GET /api/dashboard-settings
-router.get('/dashboard-settings', async (_request, response, next) => {
+router.get('/dashboard-settings', async (request, response, next) => {
   try {
-    const result = await pool.query('SELECT * FROM dashboard_settings WHERE id = 1');
+    const result = await pool.query('SELECT * FROM dashboard_settings WHERE user_id = $1 ORDER BY id LIMIT 1', [request.user.userId]);
     if (result.rowCount === 0) {
       // Default fallback
       return response.json({
@@ -51,9 +51,9 @@ router.put('/dashboard-settings', async (request, response, next) => {
     }
     const values = suppliedFields.map((field) => request.body[field]);
     const assignments = suppliedFields.map((field, index) => `${field} = $${index + 1}`);
-    values.push(1);
+    values.push(request.user.userId);
     const result = await pool.query(
-      `UPDATE dashboard_settings SET ${assignments.join(', ')}, updated_at = NOW() WHERE id = $${values.length} RETURNING *`,
+      `UPDATE dashboard_settings SET ${assignments.join(', ')}, updated_at = NOW() WHERE user_id = $${values.length} RETURNING *`,
       values
     );
 
@@ -61,10 +61,11 @@ router.put('/dashboard-settings', async (request, response, next) => {
       // Create if not exists (upsert fallback)
       const insertFields = suppliedFields.join(', ');
       const insertValues = values.slice(0, -1);
+      insertValues.push(request.user.userId);
       const insertPlaceholders = insertValues.map((_, i) => `$${i + 1}`).join(', ');
       
       const insertRes = await pool.query(
-        `INSERT INTO dashboard_settings (id, ${insertFields}) VALUES (1, ${insertPlaceholders}) RETURNING *`,
+        `INSERT INTO dashboard_settings (${insertFields}, user_id) VALUES (${insertPlaceholders}) RETURNING *`,
         insertValues
       );
       return response.json(insertRes.rows[0]);
@@ -79,7 +80,11 @@ router.put('/dashboard-settings', async (request, response, next) => {
 // POST /api/pomodoro/increment
 router.post('/pomodoro/increment', async (req, res, next) => {
   try {
-    const result = await pool.query('UPDATE dashboard_settings SET pomodoro_cycles = pomodoro_cycles + 1, updated_at = NOW() WHERE id = 1 RETURNING pomodoro_cycles');
+    const result = await pool.query('UPDATE dashboard_settings SET pomodoro_cycles = pomodoro_cycles + 1, updated_at = NOW() WHERE user_id = $1 RETURNING pomodoro_cycles', [req.user.userId]);
+    if (result.rowCount === 0) {
+      const created = await pool.query('INSERT INTO dashboard_settings (user_id, pomodoro_cycles) VALUES ($1, 1) RETURNING pomodoro_cycles', [req.user.userId]);
+      return res.json({ pomodoro_cycles: created.rows[0].pomodoro_cycles });
+    }
     res.json({ pomodoro_cycles: result.rows[0].pomodoro_cycles });
   } catch (error) {
     next(error);
