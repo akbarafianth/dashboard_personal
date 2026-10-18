@@ -21,76 +21,13 @@ tailwind.config = {
     }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const API_BASE = window.API_BASE || '/api';
-  const authPanel = document.getElementById('auth-panel');
-  const workspaceActions = document.getElementById('workspace-actions');
-  const authForm = document.getElementById('auth-form');
-  const authName = document.getElementById('auth-name');
-  const authEmail = document.getElementById('auth-email');
-  const authPassword = document.getElementById('auth-password');
-  const authSubmit = document.getElementById('auth-submit');
-  const authMessage = document.getElementById('auth-message');
-  const loginTab = document.getElementById('auth-login-tab');
-  const registerTab = document.getElementById('auth-register-tab');
-  let authMode = 'login';
+  const API_BASE = window.API_BASE || 'http://localhost:3000/api';
 
-  const showAuthenticatedWorkspace = () => {
-    authPanel?.classList.add('hidden');
-    workspaceActions?.classList.remove('hidden');
-    workspaceActions?.classList.add('flex');
-  };
-
-  const setAuthMode = (mode) => {
-    authMode = mode;
-    const registering = mode === 'register';
-    authName?.classList.toggle('hidden', !registering);
-    authName?.toggleAttribute('required', registering);
-    authSubmit.textContent = registering ? 'Daftar' : 'Masuk';
-    loginTab?.classList.toggle('bg-indigo-600', !registering);
-    registerTab?.classList.toggle('bg-indigo-600', registering);
-  };
-
-  loginTab?.addEventListener('click', () => setAuthMode('login'));
-  registerTab?.addEventListener('click', () => setAuthMode('register'));
-
-  if (window.localStorage.getItem('academiq_token')) {
-    showAuthenticatedWorkspace();
-  }
-
-  authForm?.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    authSubmit.disabled = true;
-    authMessage.textContent = 'Memproses...';
-    try {
-      const response = await fetch(`${API_BASE}/auth/${authMode}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: authName.value,
-          email: authEmail.value,
-          password: authPassword.value
-        })
-      });
-      const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || 'Autentikasi gagal');
-      window.localStorage.setItem('academiq_token', body.token);
-      window.localStorage.setItem('academiq_user', JSON.stringify(body.user));
-      showAuthenticatedWorkspace();
-      authMessage.textContent = '';
-      await loadLandingData();
-    } catch (error) {
-      authMessage.textContent = error.message;
-    } finally {
-      authSubmit.disabled = false;
-    }
-  });
-
-  async function loadLandingData() {
-    try {
-      const [analyticsRes, settingsRes] = await Promise.all([
-        fetch(`${API_BASE}/analytics`),
-        fetch(`${API_BASE}/dashboard-settings`)
-      ]);
+  try {
+    const [analyticsRes, settingsRes] = await Promise.all([
+      fetch(`${API_BASE}/analytics`),
+      fetch(`${API_BASE}/dashboard-settings`)
+    ]);
 
     if (analyticsRes.ok) {
       const analytics = await analyticsRes.json();
@@ -135,12 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         studyHoursAvgEl.textContent = `Rata-rata ${avgHoursPerDay} jam / hari`;
       }
     }
-    } catch (error) {
-      console.error('Failed to load landing page data:', error);
-    }
-  }
-
-  if (window.localStorage.getItem('academiq_token')) {
-    await loadLandingData();
+  } catch (error) {
+    console.error('Failed to load landing page data:', error);
   }
 });

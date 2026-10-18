@@ -5,7 +5,7 @@ const { buildInsert, buildUpdate } = require('./_helpers');
 
 const config = {
   table: 'events',
-  columns: ['title', 'event_date', 'description', 'category', 'subject_id', 'start_time', 'end_time', 'location', 'is_all_day', 'priority', 'user_id'],
+  columns: ['title', 'event_date', 'description', 'category', 'subject_id', 'start_time', 'end_time', 'location', 'is_all_day', 'priority'],
   required: ['title', 'event_date']
 };
 
@@ -47,7 +47,7 @@ function validatePayload(payload, config) {
 router.get('/', async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit, 10) || 200;
-    const result = await pool.query(`SELECT e.*, s.name AS subject_name, s.color_theme FROM ${config.table} e LEFT JOIN subjects s ON e.subject_id = s.id WHERE e.user_id = $1 ORDER BY e.event_date ASC LIMIT $2`, [req.user.userId, limit]);
+    const result = await pool.query(`SELECT e.*, s.name AS subject_name, s.color_theme FROM ${config.table} e LEFT JOIN subjects s ON e.subject_id = s.id ORDER BY e.event_date ASC LIMIT $1`, [limit]);
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -57,7 +57,7 @@ router.get('/', async (req, res, next) => {
 // GET /api/events/:id
 router.get('/:id', async (req, res, next) => {
   try {
-    const result = await pool.query(`SELECT e.*, s.name AS subject_name, s.color_theme FROM ${config.table} e LEFT JOIN subjects s ON e.subject_id = s.id WHERE e.id = $1 AND e.user_id = $2`, [req.params.id, req.user.userId]);
+    const result = await pool.query(`SELECT e.*, s.name AS subject_name, s.color_theme FROM ${config.table} e LEFT JOIN subjects s ON e.subject_id = s.id WHERE e.id = $1`, [req.params.id]);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Data tidak ditemukan' });
     }
@@ -74,13 +74,6 @@ router.post('/', async (req, res, next) => {
     if (validationError) {
       return res.status(400).json({ error: validationError });
     }
-    if (req.body.subject_id !== undefined && req.body.subject_id !== null) {
-      const subject = await pool.query('SELECT id FROM subjects WHERE id = $1 AND user_id = $2', [req.body.subject_id, req.user.userId]);
-      if (subject.rowCount === 0) {
-        return res.status(400).json({ error: 'subject_id tidak valid' });
-      }
-    }
-    req.body.user_id = req.user.userId;
     const { fields, values, placeholders } = buildInsert(req.body, config);
     const result = await pool.query(
       `INSERT INTO ${config.table} (${fields.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *`,
@@ -95,20 +88,13 @@ router.post('/', async (req, res, next) => {
 // PATCH /api/events/:id
 router.patch('/:id', async (req, res, next) => {
   try {
-    delete req.body.user_id;
-    if (req.body.subject_id !== undefined && req.body.subject_id !== null) {
-      const subject = await pool.query('SELECT id FROM subjects WHERE id = $1 AND user_id = $2', [req.body.subject_id, req.user.userId]);
-      if (subject.rowCount === 0) {
-        return res.status(400).json({ error: 'subject_id tidak valid' });
-      }
-    }
     const { values, assignments } = buildUpdate(req.body, config);
     if (assignments.length === 0) {
       return res.status(400).json({ error: 'Tidak ada field untuk diperbarui' });
     }
-    values.push(req.params.id, req.user.userId);
+    values.push(req.params.id);
     const result = await pool.query(
-      `UPDATE ${config.table} SET ${assignments.join(', ')}, updated_at = NOW() WHERE id = $${values.length - 1} AND user_id = $${values.length} RETURNING *`,
+      `UPDATE ${config.table} SET ${assignments.join(', ')}, updated_at = NOW() WHERE id = $${values.length} RETURNING *`,
       values
     );
     if (result.rowCount === 0) {
@@ -123,7 +109,7 @@ router.patch('/:id', async (req, res, next) => {
 // DELETE /api/events/:id
 router.delete('/:id', async (req, res, next) => {
   try {
-    const result = await pool.query(`DELETE FROM ${config.table} WHERE id = $1 AND user_id = $2 RETURNING id`, [req.params.id, req.user.userId]);
+    const result = await pool.query(`DELETE FROM ${config.table} WHERE id = $1 RETURNING id`, [req.params.id]);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Data tidak ditemukan' });
     }

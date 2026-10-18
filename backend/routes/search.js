@@ -13,9 +13,9 @@ router.get('/', async (req, res, next) => {
     const searchStr = `%${escapedQ}%`;
 
     const [tasksRes, notesRes, subjectsRes] = await Promise.all([
-       pool.query(`SELECT id, title, status as meta, 'task' as type FROM tasks WHERE user_id = $2 AND (title ILIKE $1 OR description ILIKE $1) LIMIT 5`, [searchStr, req.user.userId]),
-       pool.query(`SELECT id, title, note_date::text as meta, 'note' as type FROM notes WHERE user_id = $2 AND (title ILIKE $1 OR content ILIKE $1) LIMIT 5`, [searchStr, req.user.userId]),
-       pool.query(`SELECT id, name as title, code as meta, 'subject' as type FROM subjects WHERE user_id = $2 AND (name ILIKE $1 OR code ILIKE $1) LIMIT 5`, [searchStr, req.user.userId])
+      pool.query(`SELECT id, title, status as meta, 'task' as type FROM tasks WHERE title ILIKE $1 OR description ILIKE $1 LIMIT 5`, [searchStr]),
+      pool.query(`SELECT id, title, note_date::text as meta, 'note' as type FROM notes WHERE title ILIKE $1 OR content ILIKE $1 LIMIT 5`, [searchStr]),
+      pool.query(`SELECT id, name as title, code as meta, 'subject' as type FROM subjects WHERE name ILIKE $1 OR code ILIKE $1 LIMIT 5`, [searchStr])
     ]);
     
     res.json({

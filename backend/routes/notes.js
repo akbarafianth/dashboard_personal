@@ -10,7 +10,7 @@ const purify = DOMPurify(window);
 
 const config = {
   table: 'notes',
-  columns: ['title', 'content', 'note_date', 'subject_id', 'attachment_url', 'tags', 'is_pinned', 'user_id'],
+  columns: ['title', 'content', 'note_date', 'subject_id', 'attachment_url', 'tags', 'is_pinned'],
   required: ['title', 'content']
 };
 
@@ -29,7 +29,7 @@ function validatePayload(payload, config) {
 router.get('/', async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit, 10) || 200;
-    const result = await pool.query(`SELECT n.id, n.title, n.note_date, n.subject_id, n.is_pinned, n.created_at, n.updated_at, n.tags, n.attachment_url, s.name AS subject_name, s.color_theme FROM ${config.table} n LEFT JOIN subjects s ON n.subject_id = s.id WHERE n.user_id = $1 ORDER BY n.created_at DESC LIMIT $2`, [req.user.userId, limit]);
+    const result = await pool.query(`SELECT n.id, n.title, n.note_date, n.subject_id, n.is_pinned, n.created_at, n.updated_at, n.tags, n.attachment_url, s.name AS subject_name, s.color_theme FROM ${config.table} n LEFT JOIN subjects s ON n.subject_id = s.id ORDER BY n.created_at DESC LIMIT $1`, [limit]);
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -39,7 +39,7 @@ router.get('/', async (req, res, next) => {
 // GET /api/notes/:id
 router.get('/:id', async (req, res, next) => {
   try {
-    const result = await pool.query(`SELECT n.*, s.name AS subject_name, s.color_theme FROM ${config.table} n LEFT JOIN subjects s ON n.subject_id = s.id WHERE n.id = $1 AND n.user_id = $2`, [req.params.id, req.user.userId]);
+    const result = await pool.query(`SELECT n.*, s.name AS subject_name, s.color_theme FROM ${config.table} n LEFT JOIN subjects s ON n.subject_id = s.id WHERE n.id = $1`, [req.params.id]);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Data tidak ditemukan' });
     }
@@ -62,16 +62,6 @@ router.post('/', async (req, res, next) => {
       req.body.content = purify.sanitize(req.body.content);
     }
     
-    if (req.body.subject_id !== undefined && req.body.subject_id !== null) {
-      const subject = await pool.query('SELECT id FROM subjects WHERE id = $1 AND user_id = $2', [req.body.subject_id, req.user.userId]);
-      if (subject.rowCount === 0) {
-        return res.status(400).json({ error: 'subject_id tidak valid' });
-      }
-    }
-
-    // Add user_id to payload
-    req.body.user_id = req.user.userId;
-
     const { fields, values, placeholders } = buildInsert(req.body, config);
     const result = await pool.query(
       `INSERT INTO ${config.table} (${fields.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *`,
@@ -86,13 +76,6 @@ router.post('/', async (req, res, next) => {
 // PATCH /api/notes/:id
 router.patch('/:id', async (req, res, next) => {
   try {
-    // Verify ownership first
-    delete req.body.user_id;
-    const checkOwnership = await pool.query(`SELECT id FROM ${config.table} WHERE id = $1 AND user_id = $2`, [req.params.id, req.user.userId]);
-    if (checkOwnership.rowCount === 0) {
-      return res.status(404).json({ error: 'Data tidak ditemukan atau Anda tidak memiliki akses' });
-    }
-
     // SANITIZE HTML content if provided
     if (req.body.content) {
       req.body.content = purify.sanitize(req.body.content);
@@ -102,11 +85,14 @@ router.patch('/:id', async (req, res, next) => {
     if (assignments.length === 0) {
       return res.status(400).json({ error: 'Tidak ada field untuk diperbarui' });
     }
-    values.push(req.params.id, req.user.userId);
+    values.push(req.params.id);
     const result = await pool.query(
-      `UPDATE ${config.table} SET ${assignments.join(', ')} WHERE id = $${values.length - 1} AND user_id = $${values.length} RETURNING *`,
+      `UPDATE ${config.table} SET ${assignments.join(', ')}, updated_at = NOW() WHERE id = $${values.length} RETURNING *`,
       values
     );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Data tidak ditemukan' });
+    }
     res.json(result.rows[0]);
   } catch (error) {
     next(error);
@@ -116,7 +102,7 @@ router.patch('/:id', async (req, res, next) => {
 // DELETE /api/notes/:id
 router.delete('/:id', async (req, res, next) => {
   try {
-    const result = await pool.query(`DELETE FROM ${config.table} WHERE id = $1 AND user_id = $2 RETURNING id`, [req.params.id, req.user.userId]);
+    const result = await pool.query(`DELETE FROM ${config.table} WHERE id = $1 RETURNING id`, [req.params.id]);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Data tidak ditemukan' });
     }
@@ -131,7 +117,7 @@ router.post('/:id/export/:format', async (req, res, next) => {
   try {
     const format = req.params.format; // 'pdf' or 'markdown'
     const noteId = req.params.id;
-    const result = await pool.query(`SELECT n.*, s.name as subject_name FROM notes n LEFT JOIN subjects s ON n.subject_id = s.id WHERE n.id = $1 AND n.user_id = $2`, [noteId, req.user.userId]);
+    const result = await pool.query(`SELECT n.*, s.name as subject_name FROM notes n LEFT JOIN subjects s ON n.subject_id = s.id WHERE n.id = $1`, [noteId]);
     
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Catatan tidak ditemukan' });
@@ -158,7 +144,7 @@ router.post('/:id/export/:format', async (req, res, next) => {
       return res.send(markdownContent);
     } 
     
-    // PDF export using pdfmake (lightweight alternative)
+    // PDF export using PDFKit (serverless-compatible)
     if (format === 'pdf') {
       try {
         const PDFDocument = require('@foliojs-fork/pdfkit');
