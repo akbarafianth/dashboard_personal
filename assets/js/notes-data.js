@@ -119,7 +119,7 @@ function renderNoteDetail(note) {
     <!-- Rich Content Area -->
     <div class="p-space-lg overflow-y-auto">
       <div class="prose prose-invert max-w-none text-on-surface-variant">
-        ${note.content}
+        ${DOMPurify.sanitize(note.content)}
       </div>
       ${attachmentHtml}
     </div>
@@ -130,7 +130,20 @@ async function exportNote(id, format) {
   try {
     if (window.showToast) window.showToast('Mempersiapkan dokumen...', 'info');
     const response = await fetch(`${API_BASE}/notes/${id}/export/${format}`, { method: 'POST' });
-    if (!response.ok) throw new Error('Gagal export');
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({error: 'Unknown error'}));
+      
+      // If PDF unavailable, suggest Markdown
+      if (response.status === 503 && format === 'pdf') {
+        if (window.showToast) {
+          window.showToast('PDF tidak tersedia, mencoba export Markdown...', 'warning');
+        }
+        return exportNote(id, 'markdown');
+      }
+      
+      throw new Error(error.error || 'Gagal export');
+    }
     
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
@@ -141,10 +154,11 @@ async function exportNote(id, format) {
     a.click();
     a.remove();
     window.URL.revokeObjectURL(url);
-    if (window.showToast) window.showToast('Berhasil mendownload ' + format.toUpperCase(), 'success');
+    
+    if (window.showToast) window.showToast(`Export ${format.toUpperCase()} berhasil`, 'success');
   } catch (err) {
     console.error(err);
-    if (window.showToast) window.showToast('Gagal mengunduh berkas', 'error');
+    if (window.showToast) window.showToast(`Gagal export: ${err.message}`, 'error');
   }
 }
 

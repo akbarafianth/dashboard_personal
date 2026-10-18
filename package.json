@@ -16,12 +16,14 @@
     "@vercel/blob": "^2.8.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "dompurify": "^3.0.6",
     "express": "^4.21.2",
     "express-rate-limit": "^8.7.0",
-    "html-pdf-node": "^1.0.8",
+    "jsdom": "^22.1.0",
     "marked": "^18.0.12",
     "morgan": "^1.12.1",
     "multer": "^2.3.0",
+    "pdfmake": "^0.2.0",
     "pg": "^8.13.1"
   }
 }

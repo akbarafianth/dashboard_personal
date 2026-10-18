@@ -144,7 +144,11 @@ function syncEventDateInput() {
 
 function renderCalendar() {
   const container = document.getElementById('calendar-view-content');
-  if (!container) return;
+  if (!container) {
+    console.error('[Calendar] Container #calendar-view-content not found');
+    return;
+  }
+  console.log('[Calendar] Rendering with', dashboardEvents.length, 'events in', currentView, 'view');
   container.replaceChildren();
 
   updateHeaderLabels();
@@ -160,8 +164,20 @@ function renderCalendar() {
     renderAgendaListView(container, events);
   }
 
+  if (container.children.length === 0) {
+    console.warn('[Calendar] No calendar elements rendered');
+    const emptyMsg = document.createElement('div');
+    emptyMsg.className = 'p-space-lg text-center text-outline';
+    emptyMsg.innerHTML = `
+      <span class="material-symbols-outlined text-[48px] opacity-30">calendar_month</span>
+      <p class="font-body-md text-body-md mt-2">Tidak ada acara tersimpan. Gunakan tombol "Tambah Tugas/Acara" untuk membuat agenda baru.</p>
+    `;
+    container.appendChild(emptyMsg);
+  }
+
   renderSelectedDate(dashboardEvents);
   syncEventDateInput();
+  console.log('[Calendar] Render complete');
 }
 
 // 1. MONTH VIEW
@@ -643,12 +659,14 @@ function loadSubjectsForCalendar() {
 
 async function loadEvents() {
   try {
+    console.log('[Calendar] Loading events from API...');
     const [eventsData, tasksData, analyticsData] = await Promise.all([
-        apiRequest('/events').catch(() => []),
-        apiRequest('/tasks?status=active').catch(() => []),
-        apiRequest('/analytics').catch(() => null)
+        apiRequest('/events').catch(() => { console.warn('[Calendar] /events API failed'); return []; }),
+        apiRequest('/tasks?status=active').catch(() => { console.warn('[Calendar] /tasks API failed'); return []; }),
+        apiRequest('/analytics').catch(() => { console.warn('[Calendar] /analytics API failed'); return null; })
       ]);
-      dashboardEvents = eventsData;
+      dashboardEvents = eventsData || [];
+      console.log('[Calendar] Loaded', dashboardEvents.length, 'events from API');
 
       // Update KPI
       const kpiTenggat = document.getElementById('calendar-kpi-tenggat');
@@ -682,8 +700,9 @@ async function loadEvents() {
       }
 
       renderCalendar();
+      console.log('[Calendar] Events loading complete');
   } catch (error) {
-    console.error('Gagal memuat agenda kalender:', error);
+    console.error('[Calendar] Gagal memuat agenda kalender:', error);
   }
 }
 

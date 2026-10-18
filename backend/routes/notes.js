@@ -2,15 +2,11 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db/pool');
 const { buildInsert, buildUpdate } = require('./_helpers');
+const DOMPurify = require('dompurify');
+const { JSDOM } = require('jsdom');
 
-// Modul html-pdf-node sering bermasalah di Serverless (karena membutuhkan Puppeteer/Chromium)
-// Kita panggil secara opsional agar tidak merusak inisialisasi server.
-let htmlPdf = null;
-try {
-  htmlPdf = require('html-pdf-node');
-} catch (err) {
-  console.warn('⚠️ html-pdf-node tidak bisa diload. Fitur export PDF tidak akan bekerja. Error:', err.message);
-}
+const window = new JSDOM('').window;
+const purify = DOMPurify(window);
 
 const config = {
   table: 'notes',
@@ -60,6 +56,12 @@ router.post('/', async (req, res, next) => {
     if (validationError) {
       return res.status(400).json({ error: validationError });
     }
+    
+    // SANITIZE HTML content before saving
+    if (req.body.content) {
+      req.body.content = purify.sanitize(req.body.content);
+    }
+    
     const { fields, values, placeholders } = buildInsert(req.body, config);
     const result = await pool.query(
       `INSERT INTO ${config.table} (${fields.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *`,
@@ -74,6 +76,11 @@ router.post('/', async (req, res, next) => {
 // PATCH /api/notes/:id
 router.patch('/:id', async (req, res, next) => {
   try {
+    // SANITIZE HTML content if provided
+    if (req.body.content) {
+      req.body.content = purify.sanitize(req.body.content);
+    }
+    
     const { values, assignments } = buildUpdate(req.body, config);
     if (assignments.length === 0) {
       return res.status(400).json({ error: 'Tidak ada field untuk diperbarui' });
@@ -117,7 +124,6 @@ router.post('/:id/export/:format', async (req, res, next) => {
     }
     const note = result.rows[0];
     
-    // Helper escape untuk keamanan
     const escapeHtml = (unsafe) => {
       if (!unsafe) return '';
       return String(unsafe)
@@ -129,58 +135,64 @@ router.post('/:id/export/:format', async (req, res, next) => {
     };
 
     const dateStr = note.note_date ? new Date(note.note_date).toLocaleDateString('id-ID') : 'Tidak ada tanggal';
-    const escapedTitle = escapeHtml(note.title);
     
+    // MARKDOWN export (always works, lightweight)
     if (format === 'markdown') {
       const markdownContent = `# ${note.title}\n\n**Mata Kuliah:** ${note.subject_name || '-'}\n**Tanggal:** ${dateStr}\n\n${note.content.replace(/<[^>]+>/g, '')}`;
-      res.setHeader('Content-Type', 'text/markdown');
+      res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
       res.setHeader('Content-Disposition', `attachment; filename="Catatan-${noteId}.md"`);
       return res.send(markdownContent);
     } 
     
+    // PDF export using pdfmake (lightweight alternative)
     if (format === 'pdf') {
-      // note.content adalah HTML dari Quill, jadi kita tidak bisa sepenuhnya escapeHtml.
-      // Namun, jika ada library DOMPurify di environment node, lebih baik menggunakannya.
-      // Jika tidak, setidaknya escapedTitle mencegah injection via Title.
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html lang="id">
-        <head>
-          <meta charset="utf-8">
-          <title>${escapedTitle}</title>
-          <style>
-            body { font-family: 'Helvetica', 'Arial', sans-serif; line-height: 1.6; color: #333; margin: 40px; }
-            h1 { color: #111; }
-            .meta { color: #666; font-size: 0.9em; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-          </style>
-        </head>
-        <body>
-          <h1>${escapedTitle}</h1>
-          <div class="meta">
-            Mata Kuliah: ${escapeHtml(note.subject_name || '-')}<br>
-            Tanggal: ${dateStr}
-          </div>
-          <div class="content">
-            ${note.content}
-          </div>
-        </body>
-        </html>
-      `;
-      const file = { content: htmlContent };
-      const options = { format: 'A4', margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' } };
-      
       try {
-        if (!htmlPdf) throw new Error("html-pdf-node modul tidak tersedia di lingkungan server ini.");
-        const pdfBuffer = await htmlPdf.generatePdf(file, options);
+        const PdfPrinter = require('pdfmake/src/printer');
+        const pdfMakeFonts = require('pdfmake/build/vfs_fonts');
+        
+        const fonts = {
+          Roboto: {
+            normal: pdfMakeFonts.pdfMake.vfs['Roboto-Regular.ttf'],
+            bold: pdfMakeFonts.pdfMake.vfs['Roboto-Bold.ttf'],
+            italics: pdfMakeFonts.pdfMake.vfs['Roboto-Italic.ttf'],
+            bolditalics: pdfMakeFonts.pdfMake.vfs['Roboto-BoldItalic.ttf']
+          }
+        };
+        
+        const printer = new PdfPrinter(fonts);
+        const cleanContent = note.content.replace(/<[^>]+>/g, '');
+        
+        const docDefinition = {
+          content: [
+            { text: note.title, style: 'header' },
+            { text: `Mata Kuliah: ${note.subject_name || '-'}`, style: 'subheader' },
+            { text: `Tanggal: ${dateStr}`, style: 'subheader' },
+            { text: '\n' },
+            { text: cleanContent, style: 'body' }
+          ],
+          styles: {
+            header: { fontSize: 24, bold: true, margin: [0, 0, 0, 10] },
+            subheader: { fontSize: 12, color: '#666', margin: [0, 5, 0, 5] },
+            body: { fontSize: 11, lineHeight: 1.5 }
+          },
+          defaultStyle: { font: 'Roboto' }
+        };
+        
+        const pdfDoc = printer.createPdfKitDocument(docDefinition);
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="Catatan-${noteId}.pdf"`);
-        return res.send(pdfBuffer);
-      } catch (err) {
-        console.error('PDF Generation Error:', err);
-        return res.status(500).json({ error: 'Gagal men-generate PDF' });
+        
+        pdfDoc.pipe(res);
+        pdfDoc.end();
+      } catch (pdfErr) {
+        console.warn('PDF Generation Error:', pdfErr.message);
+        return res.status(503).json({ 
+          error: 'PDF export tidak tersedia saat ini. Silakan gunakan export Markdown.',
+          suggestion: `/api/notes/${noteId}/export/markdown`
+        });
       }
     } else {
-      res.status(400).json({ error: 'Format tidak didukung' });
+      res.status(400).json({ error: 'Format tidak didukung. Gunakan: pdf, markdown' });
     }
   } catch (error) {
     next(error);

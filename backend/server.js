@@ -23,7 +23,7 @@ pool.on('error', (err) => {
 // Rate Limiter Setup
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // limit each IP to 1000 requests per windowMs
+  max: 150, // REDUCED: from 1000 to 150 requests per 15 min (~10 req/sec per IP)
   message: { error: 'Terlalu banyak request, coba lagi nanti.' }
 });
 
