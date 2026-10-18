@@ -1,0 +1,4 @@
+{
+  "supabase": "postgresql://postgres:sHWsc.%24%2A%3Fzhm8%25%3F@db.wfyvfmdbcrknymgllrzm.supabase.co:5432/postgres",
+  "neon": "postgresql://neondb_owner:npg_XPKD0N6Gmlfh@ep-proud-frog-b3l1y2hl-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+}

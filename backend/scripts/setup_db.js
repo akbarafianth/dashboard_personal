@@ -12,7 +12,7 @@ async function setupDatabase() {
     const schemaSql = fs.readFileSync(schemaPath, 'utf8');
     
     await client.query('BEGIN');
-    console.log('Dropping app-specific existing tables (safe for Supabase system schemas)...');
+    console.log('Dropping app-specific existing tables...');
     await client.query(`
       DROP TABLE IF EXISTS schema_migrations CASCADE;
       DROP TABLE IF EXISTS dashboard_settings CASCADE;

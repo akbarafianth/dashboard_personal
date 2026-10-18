@@ -125,6 +125,20 @@ function isSameDay(d1, d2) {
 }
 
 // -------------------------------------------------------------
+// Sync hidden event_date input with selectedDate
+// -------------------------------------------------------------
+
+function syncEventDateInput() {
+  const input = document.getElementById('event-date');
+  if (input) {
+    const y = selectedDate.getFullYear();
+    const m = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const d = String(selectedDate.getDate()).padStart(2, '0');
+    input.value = `${y}-${m}-${d}`;
+  }
+}
+
+// -------------------------------------------------------------
 // View Renderers
 // -------------------------------------------------------------
 
@@ -147,6 +161,7 @@ function renderCalendar() {
   }
 
   renderSelectedDate(dashboardEvents);
+  syncEventDateInput();
 }
 
 // 1. MONTH VIEW
@@ -610,23 +625,6 @@ function navigateCalendar(direction) {
 }
 
 
-);
-    
-    subjects.forEach(sub => {
-      const code = sub.code || 'MK';
-      const day = sub.schedule_day || '-';
-      const time = sub.schedule_time || '-';
-      // If time format is "08:00 - 10:00", we just use it directly
-      const option = document.createElement('option');
-      option.value = sub.id;
-      option.textContent = `${code} - ${day} - ${time}`;
-      selects.forEach(select => { if(select) select.appendChild(option.cloneNode(true)); });
-    });
-  } catch (err) {
-    console.error('Failed to load subjects', err);
-  }
-}
-
 
 function loadSubjectsForCalendar() {
   const html = '<option value="">Umum / Non-Matkul</option>' + `
@@ -659,10 +657,10 @@ async function loadEvents() {
 
       if (kpiTenggat && tasksData) {
         const now = new Date();
-        const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay()); // Sunday as start
+        const startOfWeek = getMondayOfWeek(now);
         const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 7);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        endOfWeek.setHours(23, 59, 59, 999);
 
         // Count events from /tasks array that happen this week
         const tasksThisWeek = tasksData.filter(t => {
@@ -864,24 +862,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   renderHeaderDate();
-  renderCalendar(); // Memaksa render kosong pada awal muat agar tidak blank
+  renderCalendar();
   loadEvents();
   window.setInterval(() => { if (!document.hidden) loadEvents(); }, 5000);
 });
 
-
-
-
-if (!window.syncChannel) {
-  window.syncChannel = new BroadcastChannel('academiq_sync');
-  window.syncChannel.onmessage = (event) => {
-    if (event.data === 'REFRESH') {
-      if (typeof loadDashboardData === 'function') loadDashboardData().catch(()=>{});
-      if (typeof loadEvents === 'function') loadEvents().catch(()=>{});
-      if (typeof loadSubjects === 'function') loadSubjects().catch(()=>{});
-      if (typeof loadNotes === 'function') loadNotes().catch(()=>{});
-      if (typeof loadTasks === 'function') loadTasks().catch(()=>{});
-      if (typeof loadAllTasks === 'function') loadAllTasks().catch(()=>{});
-    }
-  };
-}

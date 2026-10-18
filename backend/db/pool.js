@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const dbUrl = process.env.DATABASE_URL || 'postgres://placeholder:placeholder@localhost:5432/placeholder';
-const isCloudDB = dbUrl.includes('supabase.com') || dbUrl.includes('render.com') || dbUrl.includes('neon.tech');
+const isCloudDB = dbUrl.includes('neon.tech') || dbUrl.includes('render.com') || dbUrl.includes('supabase.com');
 
 if (!process.env.DATABASE_URL) {
   console.warn('⚠️ DATABASE_URL belum diset di environment variables. Menggunakan placeholder (koneksi akan gagal jika query dijalankan).');
@@ -17,7 +17,7 @@ if (!global.__dbPool) {
     max: process.env.VERCEL ? 1 : 10,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
-    // Auto-enable SSL for cloud databases (like Supabase) even in local development
+    // Auto-enable SSL for cloud databases (Neon, Render, etc.) even in local development
     ssl: (process.env.NODE_ENV === 'production' || isCloudDB) ? { rejectUnauthorized: false } : false
   });
 }

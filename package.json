@@ -7,10 +7,13 @@
     "start": "node backend/server.js",
     "dev": "node --watch backend/server.js",
     "db:setup": "node backend/scripts/setup_db.js",
-    "db:seed": "node backend/scripts/seed.js"
+    "db:seed": "node backend/scripts/seed.js",
+    "db:verify": "node backend/scripts/verify_neon.js",
+    "migrate:direct": "node backend/scripts/migrate_supabase_to_neon.js",
+    "migrate:import-dump": "node backend/scripts/migrate_import_from_dump.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.116.0",
+    "@vercel/blob": "^2.8.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

@@ -3,9 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const crypto = require('crypto');
-const supabase = require('../db/supabase');
-
-const BUCKET_NAME = 'uploads';
+const { put } = require('@vercel/blob');
 
 const storage = multer.memoryStorage();
 
@@ -63,23 +61,12 @@ router.post('/', uploadMiddleware, async (req, res) => {
     const ext = path.extname(req.file.originalname).toLowerCase();
     const fileName = `${crypto.randomUUID()}${ext}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(fileName, req.file.buffer, {
-        contentType: req.file.mimetype,
-        upsert: false
-      });
+    const blob = await put(fileName, req.file.buffer, {
+      contentType: req.file.mimetype,
+      access: 'public'
+    });
 
-    if (uploadError) {
-      console.error('Supabase Storage Error:', uploadError);
-      return res.status(500).json({ error: 'Gagal mengunggah file ke storage.' });
-    }
-
-    const { data: publicUrlData } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(fileName);
-
-    res.json({ url: publicUrlData.publicUrl });
+    res.json({ url: blob.url });
   } catch (error) {
     console.error('Upload Error:', error);
     res.status(500).json({ error: 'Gagal mengunggah file' });
